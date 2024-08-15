@@ -1,0 +1,19 @@
+FROM python:3.6
+RUN mkdir /code /resources
+RUN mkdir -p /outputs
+WORKDIR /code
+COPY ./fetalFracCalc.pl /code/home/isabel/GITHUB/SCIP/requirements.txt
+COPY requirements.txt /code
+COPY ./Perl_test.sh /code
+COPY ./test/SCIP* /resources
+RUN pip3 install -r requirements.txt
+RUN chmod +x /code/fetalFracCalc.pl
+RUN chmod +x /code/Perl_test.sh
+RUN cpan Statistics::Basic
+ENTRYPOINT ["./Perl_test.sh"]
+
+# could add docker copy function to make file to transfer outputs to local dir
+# rachel says use mounting volume?
+# probs wanna convert perl to python and allow user input
+# before conversion, need to... do assessment of which AI tools would be
+# best for this. 

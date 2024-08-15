@@ -1,0 +1,130 @@
+---
+title: "Raw_SCIP259_C"
+output:
+  html_document: default
+  pdf_document: default
+classoption: landscape
+---
+```{r , include=FALSE}
+#Add the table
+library(knitr)
+library(kableExtra)
+library(readr)
+library(rmarkdown)
+FL_SNPs <- read.table("/Users/leesilcock/Desktop/HBB Files/Final_Consensus_SCIP259_155bp_fetalfrac.txt", sep="\t")
+colnames(FL_SNPs) <- c("Chromosome", "Start", "End", "Num.reads", "A", "A fraction", "G", "G fraction", "C", "C fraction", "T", "T fraction")
+FL_SNPs$ColMax <- apply(FL_SNPs[, c(6, 8, 10, 12)], 1, max)
+FL_SNPs$PaternalFraction <- 100-(FL_SNPs$ColMax)
+FL_SNPs$FetalFraction <- 2*FL_SNPs$PaternalFraction
+mean_pat <- mean(FL_SNPs$PaternalFraction)
+median_pat <- median(FL_SNPs$PaternalFraction)
+IQR_Pat <- IQR(FL_SNPs$PaternalFraction)
+mean_Fet <- mean(FL_SNPs$FetalFraction)
+median_Fet <- median(FL_SNPs$FetalFraction)
+IQR_Fet <- IQR(FL_SNPs$FetalFraction)
+```
+```{r, include=FALSE}
+#Add the Total count and the Alternative count
+Total_count <- 51651
+Alt_count <- 19119
+```
+```{r, echo=FALSE}
+#Change format to 'latex' and font to 5-8 if exporting to pdf
+FL_SNPs %>%
+  kable(format = 'html', longtable=T, booktabs=T) %>%
+  kable_styling(font_size = 10, position = 'center', latex_options = "striped") 
+```
+```{r, echo=FALSE, collapse=TRUE, comment=""}
+message("Interquartile range of the fetal fraction:")
+message(IQR_Fet)
+message("Median of the fetal fraction:")
+message(median_Fet)
+message("Number of SNPs tested for:")
+message(nrow(FL_SNPs))
+message("Total count:")
+message(Total_count)
+message("Alternative count:")
+message(Alt_count)
+message("Alternative ratio:")
+message(Alt_count/Total_count)
+```
+```{r, echo=FALSE, fig.align='center', cex=4, fig.height=6, fig.width=8}
+Q0 <- 0.5
+Q1 <- 0.5 + (median(FL_SNPs$FetalFraction)/200)
+d <- (1-Q1)/(1-Q0)
+g <- (Q1*(1-Q0)/(Q0*(1-Q1)))
+Upper_limit <- ((log(8)/Total_count)-log(d))/log(g)
+Lower_limit <- ((log(1/8)/Total_count)-log(d))/log(g)
+Q3 <- 0.5 - (median(FL_SNPs$FetalFraction)/200)
+Q4 <- 0.5
+d_wt <- (1-Q4)/(1-Q3)
+g_wt <- (Q4*(1-Q3))/(Q3*(1-Q4))
+Upper_limit_wt <- ((log(8)/Total_count)-log(d_wt))/log(g_wt)
+Lower_limit_wt <- ((log(1/8)/Total_count)-log(d_wt))/log(g_wt)
+Upper_limit_graph_rmd <- (((log(8)/50:120000)-log(d))/log(g))
+Lower_limit_graph_rmd <- (((log(1/8)/50:120000)-log(d))/log(g))
+Upper_limit_graph_wt <- (((log(8)/50:120000)-log(d_wt))/log(g_wt))
+Lower_limit_graph_wt <- (((log(1/8)/50:120000)-log(d_wt))/log(g_wt))
+g_range <- range(Upper_limit_graph_rmd, Lower_limit_graph_rmd, Upper_limit_graph_wt, Lower_limit_graph_wt, (Alt_count/Total_count))
+plot(Upper_limit_graph_rmd, type="l", ylim=g_range, xlim=range(0:120000), ann=FALSE, col="red")
+par(new=TRUE)
+plot(Lower_limit_graph_rmd, type="l", ylim=g_range, xlim=range(0:120000), ann=FALSE, col="pink")
+par(new=TRUE)
+plot(Upper_limit_graph_wt, type="l", ylim=g_range, xlim=range(0:120000), ann=FALSE, col="darkseagreen1")
+par(new=TRUE)
+plot(Lower_limit_graph_wt, type="l", ylim=g_range, xlim=range(0:120000), ann=FALSE, col="darkseagreen4")
+par(new=TRUE)
+plot(Total_count, (Alt_count/Total_count), pch=16, ann=FALSE, ylim=g_range, xlim=range(0:120000), col="blue")
+title(main="Modified SPRT", col.main="black", font.main=1, ps=10)
+title(xlab="Total number of counts", font.lab=1, ps=7)
+title(ylab="Pr over-represented allele", font.lab=1, ps=7)
+Corner_text <- function(text, location="top"){
+  legend(location,legend=text, bty ="n", pch=NA) 
+}
+Corner_text(text="Mutant")
+Corner_text(text="Wild type",location= "bottom")
+Corner_text(text="Heterozygous", location="center")
+```
+
+```{r, echo=FALSE, comment=""}
+if((Alt_count/Total_count)>Upper_limit) {message("Homozygous Mutant")} else
+  if((Alt_count/Total_count)>Lower_limit) {message("Inconclusive between Homozygous Mutant and Heterozygous")} else
+    if((Alt_count/Total_count)>Upper_limit_wt) {message("Heterozygous")} else
+      if ((Alt_count/Total_count)>Lower_limit_wt) {message("Inconclusive between Homozygous Wild Type and Heterozygous")} else
+        if((Alt_count/Total_count)<Lower_limit_wt) {message("Homozygous Wild Type")}
+```
+
+```{r, echo=FALSE, fig.align='center', cex=4, fig.height=6, fig.width=8}
+Chr11 <- data.frame(5225264:5227271, 0.5)
+Xrange <- range(5225264:5227271)
+Yrange <- range(0:1.2)
+HBB_exon_1 <- data.frame(5227071:5226930, 0.5)
+HBB_exon_2 <- data.frame(5226799:5226577, 0.5)
+HBB_exon_3 <- data.frame(5225726:5225464, 0.5)
+Fetal_Het_alt <- data.frame(5225264:5227271, ((100-median_pat)/100))
+Fetal_Hom_alt <- data.frame(5225264:5227271, (0.5+(median_pat/100)))
+Fetal_Hom_ref <- data.frame(5225264:5227271, (0.5-(median_pat/100)))
+Fetal_Het_ref <- data.frame(5225264:5227271, (median_pat/100))
+Variant_of_interest <- data.frame(5226925, (Alt_count/Total_count))
+plot(Chr11, type="l", xlim=Xrange, ylim=Yrange, ann=FALSE, col="black")
+par(new=TRUE)
+plot(HBB_exon_1, type="l", xlim=Xrange, ylim=Yrange, ann=FALSE, lwd=3, col="purple")
+par(new=TRUE)
+plot(HBB_exon_2, type="l", xlim=Xrange, ylim=Yrange, ann=FALSE, lwd=3, col="green")
+par(new=TRUE)
+plot(HBB_exon_3, type="l", xlim=Xrange, ylim=Yrange, ann=FALSE, lwd=3, col="orange")
+par(new=TRUE)
+plot(Fetal_Het_alt, type="l", xlim=Xrange, ylim=Yrange, ann=FALSE, lwd=4, col="cadetblue3")
+par(new=TRUE)
+plot(Fetal_Hom_alt, type="l", xlim=Xrange, ylim=Yrange, ann=FALSE, lwd=4, col="cadetblue3")
+par(new=TRUE)
+plot(Fetal_Hom_ref, type="l", xlim=Xrange, ylim=Yrange, ann=FALSE, lwd=4, col="cadetblue3")
+par(new=TRUE)
+plot(Fetal_Het_ref, type="l", xlim=Xrange, ylim=Yrange, ann=FALSE, lwd=4, col="cadetblue3")
+par(new=TRUE)
+plot(Variant_of_interest, pch=16, xlim=Xrange, ylim=Yrange, ann=FALSE, col="red")
+
+
+#rmarkdown::render("Model_SCIP208.Rmd") 
+```
+
