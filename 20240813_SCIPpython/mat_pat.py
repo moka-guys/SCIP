@@ -14,3 +14,40 @@
 # need to split strings into component parts. 
 # and then ... do stuff. Save strings in list? or set variables to 
 # true or false?
+
+import math
+
+def alleles_of_interest(mat_gt,pat_gt):
+
+    mat_alleles = []
+    pat_alleles = []
+
+    # TODO check alleles provided are valid aka S C D or E
+
+    # parsing maternal alleles
+    if type(mat_gt) == str:
+        mat_gt = str(mat_gt)
+        mat_alleles = list(mat_gt)
+        print("The maternal genotype provided is " + mat_gt)
+    else:
+        print("No maternal genotype provided")
+
+    # parsing paternal alleles
+    if type(pat_gt) == str:
+        pat_gt = str(pat_gt)
+        pat_alleles = list(pat_gt)
+        print("The paternal genotype provided is " + pat_gt)
+    else:
+        print("No paternal genotype provided")
+    
+    # combine maternal and paternal alleles to produce list of alleles relevant
+    # for this patient
+
+    alleles = mat_alleles + list(set(pat_alleles) - set(mat_alleles))
+
+    print(alleles)
+
+    # if no alleles / alleles list is empty - error exception here TODO
+  
+    return(alleles)
+#   
