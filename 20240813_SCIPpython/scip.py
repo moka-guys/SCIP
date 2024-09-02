@@ -7,8 +7,10 @@
 import sys 
 from samplesheet_parsing import *
 from mat_pat import *
+from total_and_alt_count import *
 import pandas as pd
 import math
+import os
 
 class SCIP(object):
     """
@@ -37,12 +39,23 @@ class SCIP(object):
 
             # assign patient info to variables
             sample,mat_gt,pat_gt,hbb_file,sced_file = row_to_vars(row_index,ss)
-            print(sample)
-            #print(mat_gt)
-            #print(pat_gt)
-            #print(sced_file)
-
+            
+            # extract parental alleles
             alleles = alleles_of_interest(mat_gt,pat_gt)
+            print(alleles)
+
+            # extract total and alt counts
+            S_total, S_alt, C_total, C_alt, E_total, E_alt, D_total, D_alt = total_and_alt_vars(sced_file, alleles)
+            print(S_total)
+            print(S_alt)
+            print(C_total)
+            print(C_alt)
+            print(E_total)
+            print(E_alt)
+            print(D_total)
+            print(D_alt)
+            
+
             
 
 if __name__ == "__main__":

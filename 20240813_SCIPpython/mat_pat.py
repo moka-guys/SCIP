@@ -26,7 +26,7 @@ def alleles_of_interest(mat_gt,pat_gt):
 
     # parsing maternal alleles
     if type(mat_gt) == str:
-        mat_gt = str(mat_gt)
+        mat_gt = str(mat_gt) # TODO make sure alleles in upper case
         mat_alleles = list(mat_gt)
         print("The maternal genotype provided is " + mat_gt)
     else:
@@ -43,11 +43,11 @@ def alleles_of_interest(mat_gt,pat_gt):
     # combine maternal and paternal alleles to produce list of alleles relevant
     # for this patient
 
-    alleles = mat_alleles + list(set(pat_alleles) - set(mat_alleles))
+    parental_alleles = mat_alleles + list(set(pat_alleles) - set(mat_alleles))
 
-    print(alleles)
+    print(parental_alleles)
 
     # if no alleles / alleles list is empty - error exception here TODO
   
-    return(alleles)
+    return(parental_alleles)
 #   

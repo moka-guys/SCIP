@@ -35,9 +35,9 @@ def process_row(chr, start, end, num_reads, counts, output_file, fetal_fraction_
     print(f"{chr}\t{start}\t{end}\t{num_reads}\t{num_A}\t{num_A_Frac}\t{num_G}\t{num_G_Frac}\t{num_C}\t{num_C_Frac}\t{num_T}\t{num_T_Frac}")
 
 # feed mpileup file and output file path from scip.py / the sample sheet.
-def fetal_frac(depth, mpileup_file, output_file_path):
+def fetal_frac(depth, HBB_mpileup_file, output_file_path):
     # Open files for reading and writing
-    with open(mpileup_file, "r") as r1, open(output_file_path, "w") as fw2:
+    with open(HBB_mpileup_file, "r") as r1, open(output_file_path, "w") as fw2:
         fetal_fraction_list = []
         informative_snps = 0
 
