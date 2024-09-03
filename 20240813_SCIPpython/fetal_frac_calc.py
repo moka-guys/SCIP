@@ -3,7 +3,7 @@ import statistics
 # function that counts each base in row, calcs fraction
 # and total count
 #TODO docstring
-def process_row(chr, start, end, num_reads, counts, output_file, fetal_fraction_list):
+def process_row(depth, chr, start, end, num_reads, counts, output_file, fetal_fraction_list):
     num_A = counts.count('A') + counts.count('a')
     num_G = counts.count('G') + counts.count('g')
     num_C = counts.count('C') + counts.count('c')
@@ -16,7 +16,9 @@ def process_row(chr, start, end, num_reads, counts, output_file, fetal_fraction_
 
     # TODO - currently this does not take into account whether the read depth has reached the minimum set, produces a number I think is misleading
     is_informative = False
-    if 1 < num_A_Frac < 20:
+    if num_reads < depth:
+        is_informative = False
+    elif 1 < num_A_Frac < 20:
         fetal_fraction_list.append(num_A_Frac * 2)
         is_informative = True
     elif 1 < num_G_Frac < 20:
@@ -31,9 +33,9 @@ def process_row(chr, start, end, num_reads, counts, output_file, fetal_fraction_
 
     if is_informative:
         output_file.write(f"{chr}\t{start}\t{end}\t{num_reads}\t{num_A}\t{num_A_Frac}\t{num_G}\t{num_G_Frac}\t{num_C}\t{num_C_Frac}\t{num_T}\t{num_T_Frac}\n")
-    
-    print(f"{chr}\t{start}\t{end}\t{num_reads}\t{num_A}\t{num_A_Frac}\t{num_G}\t{num_G_Frac}\t{num_C}\t{num_C_Frac}\t{num_T}\t{num_T_Frac}")
+        print(f"{chr}\t{start}\t{end}\t{num_reads}\t{num_A}\t{num_A_Frac}\t{num_G}\t{num_G_Frac}\t{num_C}\t{num_C_Frac}\t{num_T}\t{num_T_Frac}")
 
+    return is_informative
 # feed mpileup file and output file path from scip.py / the sample sheet.
 def fetal_frac(depth, HBB_mpileup_file, output_file_path):
     # Open files for reading and writing
@@ -52,8 +54,13 @@ def fetal_frac(depth, HBB_mpileup_file, output_file_path):
             num_reads = columns[3]
             calls = columns[4]
 
+            # Ensure num_reads for row is greater than minimum required depth
+            if int(num_reads) < depth:
+                continue
+
+
             # Ensure num_reads is numeric
-            if not num_reads.isdigit() or int(num_reads) < depth:
+            if not num_reads.isdigit():
                 continue
             
             num_reads = int(num_reads)
@@ -69,8 +76,9 @@ def fetal_frac(depth, HBB_mpileup_file, output_file_path):
                 calls = calls.replace('.', 'T').replace(',', 't')
 
             # Process the row
-            process_row(chr, start, end, num_reads, calls, fw2, fetal_fraction_list)
-            informative_snps += 1
+            informative_row = process_row(depth, chr, start, end, num_reads, calls, fw2, fetal_fraction_list)
+            if informative_row:
+                informative_snps += 1
 
         # Compute statistics
         if fetal_fraction_list:
@@ -83,8 +91,8 @@ def fetal_frac(depth, HBB_mpileup_file, output_file_path):
         fw2.write(f"Min Read Depth Required: {depth}\n")
         fw2.write(f"Fetal Fraction Estimate: {average}\n")
         fw2.write(f"Fetal StdDev: {st_dev}\n")
-        fw2.write(f"No. Informative SNPS: {informative_snps}\n")
+        fw2.write(f"No. Informative SNPS at Min Read Depth: {informative_snps}\n")
         fw2.write("Informative SNP defined as >2% and <40% Fetal Fraction\n") # this value doesn't take into account whether the SNP reaches the minimum depth.
 
 ####### test ###########
-fetal_frac(100,"SCIP259_HBB_targets.mpileup","SCIP259_fetal_frac_output.txt")
+#fetal_frac(350,"SCIP259_HBB_targets.mpileup","SCIP259_fetal_frac_output.txt")

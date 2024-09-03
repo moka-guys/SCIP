@@ -8,6 +8,7 @@ import sys
 from samplesheet_parsing import *
 from mat_pat import *
 from total_and_alt_count import *
+from fetal_frac_calc import *
 import pandas as pd
 import math
 import os
@@ -44,8 +45,10 @@ class SCIP(object):
             alleles = alleles_of_interest(mat_gt,pat_gt)
             print(alleles)
 
-            # extract total and alt counts
+            # extract total and alt counts of parental alleles to variables
             S_total, S_alt, C_total, C_alt, E_total, E_alt, D_total, D_alt = total_and_alt_vars(sced_file, alleles)
+            
+            # TODO remove variables that are empty
             print(S_total)
             print(S_alt)
             print(C_total)
@@ -54,6 +57,13 @@ class SCIP(object):
             print(E_alt)
             print(D_total)
             print(D_alt)
+
+            # generate output file name for fetal fractions
+            fetal_frac_output_path = sample + "_fetal_frac_output.txt"
+            
+            # determine informative snps and calculate fetal fractions
+            # TODO softcode depth value
+            fetal_frac(350,hbb_file,fetal_frac_output_path)
             
 
             

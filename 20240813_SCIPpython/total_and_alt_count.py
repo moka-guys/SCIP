@@ -14,11 +14,6 @@ def identify_allele(row):
     elif row.iloc[0] == "chr11" and row.iloc[1] == 5225678:
         return 'D'
     
-#print(SCED_pileup_file.apply(identify_allele, axis = 1))
-
-
-
-# softcode filename TODO
 def total_and_alt_counts(SCED_pileup_file,parental_alleles):
     SCED_pileup_file = pd.read_csv(SCED_pileup_file, delimiter="\t", header = None)
 
