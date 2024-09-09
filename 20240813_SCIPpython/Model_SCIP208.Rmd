@@ -1,5 +1,5 @@
 ---
-title: "Raw_SCIP259_C"
+title: "test SCIP10"
 output:
   html_document: default
   pdf_document: default
@@ -11,7 +11,17 @@ library(knitr)
 library(kableExtra)
 library(readr)
 library(rmarkdown)
-FL_SNPs <- read.table("/Users/leesilcock/Desktop/HBB Files/Final_Consensus_SCIP259_155bp_fetalfrac.txt", sep="\t")
+
+# Read the HBB mpileup output into a vector where each element is a line
+lines <- readLines("perloutputHBB.txt")
+# Remove the last 5 lines
+lines <- head(lines, -5)
+# Write the modified content back to new file
+writeLines(lines, "perloutputHBB_short.txt")
+
+
+FL_SNPs <- read.table("/cloud/project/perloutputHBB_short.txt", sep="\t", header = T)
+# rename columns
 colnames(FL_SNPs) <- c("Chromosome", "Start", "End", "Num.reads", "A", "A fraction", "G", "G fraction", "C", "C fraction", "T", "T fraction")
 FL_SNPs$ColMax <- apply(FL_SNPs[, c(6, 8, 10, 12)], 1, max)
 FL_SNPs$PaternalFraction <- 100-(FL_SNPs$ColMax)
@@ -24,9 +34,17 @@ median_Fet <- median(FL_SNPs$FetalFraction)
 IQR_Fet <- IQR(FL_SNPs$FetalFraction)
 ```
 ```{r, include=FALSE}
-#Add the Total count and the Alternative count
-Total_count <- 51651
-Alt_count <- 19119
+#Add the Total count and the Alternative count for the disease allele in question
+# patient SCIP259's maternal genotype is SC - need to look at both alleles independently, remember they're at different loci
+
+# for S allele
+Total_count <- 1765 
+Alt_count <-911 
+
+# for C allele
+#Total_count <- 1796
+#Alt_count <- 681
+
 ```
 ```{r, echo=FALSE}
 #Change format to 'latex' and font to 5-8 if exporting to pdf

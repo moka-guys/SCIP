@@ -9,9 +9,11 @@ from samplesheet_parsing import *
 from mat_pat import *
 from total_and_alt_count import *
 from fetal_frac_calc import *
+from R_conversion import *
 import pandas as pd
 import math
 import os
+import matplotlib.pyplot as plt
 
 class SCIP(object):
     """
@@ -47,24 +49,23 @@ class SCIP(object):
 
             # extract total and alt counts of parental alleles to variables
             S_total, S_alt, C_total, C_alt, E_total, E_alt, D_total, D_alt = total_and_alt_vars(sced_file, alleles)
-            
+            total_counts = [S_total, C_total, E_total, D_total]
+            alt_counts = [S_alt, C_alt, E_alt, D_alt]
+            allele_labels = ["S allele", "C allele", "E allele", "D allele"]
             # TODO remove variables that are empty
-            print(S_total)
-            print(S_alt)
-            print(C_total)
-            print(C_alt)
-            print(E_total)
-            print(E_alt)
-            print(D_total)
-            print(D_alt)
 
-            # generate output file name for fetal fractions
-            fetal_frac_output_path = sample + "_fetal_frac_output.txt"
-            
-            # determine informative snps and calculate fetal fractions
+            # determine informative snps and calculate fetal fractions, save to txt file
             # TODO softcode depth value
-            fetal_frac(350,hbb_file,fetal_frac_output_path)
-            
+            fetal_frac_output_path = sample + "_fetal_frac_output.txt"
+            fetal_frac(390,hbb_file,fetal_frac_output_path)
+
+            # predict genotype using R script conversion
+
+            for total, alt, label in zip(total_counts, alt_counts, allele_labels):
+                # selecting only for the relevant alleles according to parental gt
+                if total is not None:
+                    prediction = gt_prediction(fetal_frac_output_path,total,alt)
+                    print("The predicted fetal genotype for the " + label + " allele is: " + prediction)
 
             
 

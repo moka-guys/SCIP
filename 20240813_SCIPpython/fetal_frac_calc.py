@@ -16,9 +16,7 @@ def process_row(depth, chr, start, end, num_reads, counts, output_file, fetal_fr
 
     # TODO - currently this does not take into account whether the read depth has reached the minimum set, produces a number I think is misleading
     is_informative = False
-    if num_reads < depth:
-        is_informative = False
-    elif 1 < num_A_Frac < 20:
+    if 1 < num_A_Frac < 20:
         fetal_fraction_list.append(num_A_Frac * 2)
         is_informative = True
     elif 1 < num_G_Frac < 20:
@@ -36,6 +34,7 @@ def process_row(depth, chr, start, end, num_reads, counts, output_file, fetal_fr
         print(f"{chr}\t{start}\t{end}\t{num_reads}\t{num_A}\t{num_A_Frac}\t{num_G}\t{num_G_Frac}\t{num_C}\t{num_C_Frac}\t{num_T}\t{num_T_Frac}")
 
     return is_informative
+
 # feed mpileup file and output file path from scip.py / the sample sheet.
 def fetal_frac(depth, HBB_mpileup_file, output_file_path):
     # Open files for reading and writing
@@ -54,16 +53,16 @@ def fetal_frac(depth, HBB_mpileup_file, output_file_path):
             num_reads = columns[3]
             calls = columns[4]
 
-            # Ensure num_reads for row is greater than minimum required depth
-            if int(num_reads) < depth:
-                continue
-
-
             # Ensure num_reads is numeric
             if not num_reads.isdigit():
                 continue
-            
+
             num_reads = int(num_reads)
+
+            # check whether number of reads meets depth requirement. 
+            # If not, move on from row
+            if num_reads < depth:
+                continue
 
             # Replace '.' and ',' with corresponding bases
             if columns[2] == 'A':
