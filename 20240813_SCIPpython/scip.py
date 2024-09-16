@@ -10,6 +10,7 @@ from mat_pat import *
 from total_and_alt_count import *
 from fetal_frac_calc import *
 from fetal_gt_pred import *
+from html_report import *
 import pandas as pd
 import math
 import os
@@ -59,13 +60,45 @@ class SCIP(object):
             fetal_frac_output_path = sample + "_fetal_frac_output.txt"
             fetal_frac(390,hbb_file,fetal_frac_output_path)
 
-            # predict genotype using R script conversion
+            # Initialise empty html report content variable
+            html_content = ""
+            html_summary_content = ""
 
+            # generate report title
+            report_name = sample + " SCIP Report"
+
+            # predict genotype using R script conversion
             for total, alt, label in zip(total_counts, alt_counts, allele_labels):
                 # selecting only for the relevant alleles according to parental gt
                 if total is not None:
-                    prediction = gt_prediction(fetal_frac_output_path,total,alt)
+                    pred_and_stats = gt_prediction(fetal_frac_output_path,total,alt)
+                    
+                    prediction, mean_pat, median_pat, \
+                        IQR_pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs = pred_and_stats[0], pred_and_stats[1], \
+                        pred_and_stats[2], pred_and_stats[2], pred_and_stats[4], pred_and_stats[5], pred_and_stats[6], \
+                        pred_and_stats[7]
+
                     print("The predicted fetal genotype for the " + label + " allele is: " + prediction)
+                    
+                    # generate html content for this allele of interest
+                    html_content = html_content + generate_html_content(mean_pat, median_pat, IQR_pat, mean_Fet, \
+                                          median_Fet, IQR_Fet, total, alt, FL_SNPs, label, report_name)
+                    
+                    # generate summary html content for this allele of interest
+                    html_summary_content = html_summary_content + generate_summary_html_content(report_name,label,prediction)
+
+            # generate report file name                   
+            report_file_name = report_name + ".html"
+
+            # generate html header for report
+            html_header = generate_html_header(report_name)
+
+            # combine html contents
+            all_html = html_header + html_summary_content + html_content
+
+            # output html_content to html report
+            with open (report_file_name, 'w') as f:
+                f.write(all_html)
 
             
 

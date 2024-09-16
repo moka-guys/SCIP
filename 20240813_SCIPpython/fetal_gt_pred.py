@@ -70,7 +70,7 @@ def gt_prediction(fetal_frac,total_count,alt_count):
     else:
         prediction = "Homozygous Wild Type"
 
-    return prediction
+    return prediction, mean_pat, median_pat, IQR_Pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs
 
 
 
