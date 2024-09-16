@@ -8,19 +8,11 @@ def gt_prediction(fetal_frac,total_count,alt_count):
     import numpy as np
     import matplotlib.pyplot as plt
 
-    # Read the file, process it, and remove the last 5 lines
-    with open(fetal_frac, 'r') as file:
-        lines = file.readlines()
-
-    # Remove the last 5 lines and write back to a new file
-    lines = lines[:-5]
-    with open('perloutputHBB_short.txt', 'w') as file: #TODO softcode or remove
-        file.writelines(lines)
-
-    # Read the processed file into a pandas DataFrame
-    FL_SNPs = pd.read_csv('perloutputHBB_short.txt', sep='\t') #TODO softcode this / separate function?
-    # No need to save as text file, can leave as df.
-
+    # read the fetal fraction file into a pandas df
+    FL_SNPs = pd.read_csv(fetal_frac, sep = '\t')
+    # remove the last five lines which do not contain informative SNP information
+    FL_SNPs = FL_SNPs.iloc[:-5]
+    
     # Rename the columns
     FL_SNPs.columns = ["Chromosome", "Start", "End", "Num.reads", "A", "A_fraction", 
                     "G", "G_fraction", "C", "C_fraction", "T", "T_fraction"]

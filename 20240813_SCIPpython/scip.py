@@ -9,7 +9,7 @@ from samplesheet_parsing import *
 from mat_pat import *
 from total_and_alt_count import *
 from fetal_frac_calc import *
-from R_conversion import *
+from fetal_gt_pred import *
 import pandas as pd
 import math
 import os
