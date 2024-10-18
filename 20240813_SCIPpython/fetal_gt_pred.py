@@ -100,7 +100,7 @@ def gt_prediction(fetal_frac,total_count,alt_count):
     # plt.legend()
     # plt.show()
 
-#     # Chromosome 11 plot with regions of interest
+# #     # Chromosome 11 plot with regions of interest
 #     xrange = np.arange(5225264, 5227272)
 #     yrange = [0, 1.2]
 

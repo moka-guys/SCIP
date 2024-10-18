@@ -156,15 +156,48 @@ def generate_sprt_plot(Total_count, Alt_count, d, g, d_wt, g_wt):
 
 
 
-def generate_chr11_plot(): #TODO how is it deciding what allele to show?
+def generate_chr11_plot(median_pat, Alt_count,Total_count): #TODO how is it deciding what allele to show?
+    # Define the x and y ranges
     xrange = np.arange(5225264, 5227272)
     yrange = [0, 1.2]
 
+    # Define the HBB exon ranges
+    HBB_exon_1 = np.arange(5227071, 5226929, -1)
+    HBB_exon_2 = np.arange(5226799, 5226576, -1)
+    HBB_exon_3 = np.arange(5225726, 5225463, -1)
+
+    # Define the fetal variants
+    Fetal_Het_alt = [((100 - median_pat) / 100)] * len(xrange)
+    Fetal_Hom_alt = [(0.5 + (median_pat / 100))] * len(xrange)
+    Fetal_Hom_ref = [(0.5 - (median_pat / 100))] * len(xrange)
+    Fetal_Het_ref = [(median_pat / 100)] * len(xrange)
+    Variant_of_interest = [(Alt_count / Total_count)]
+
+    # Create a Plotly figure
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=xrange, y=[0.5]*len(xrange), mode='lines', name='Chr11', line=dict(color='black')))
-    
-    fig.update_layout(title="Chromosome 11 Plot", xaxis_title="Position", yaxis_title="Fraction")
-    
+
+    # Add traces for each line
+    fig.add_trace(go.Scatter(x=xrange, y=[0.5] * len(xrange), mode='lines', 
+                             line=dict(color='black'), name='Chr11'))
+    fig.add_trace(go.Scatter(x=HBB_exon_1, y=[0.5] * len(HBB_exon_1), mode='lines', 
+                             line=dict(color='purple', width=10), name='HBB exon 1'))
+    fig.add_trace(go.Scatter(x=HBB_exon_2, y=[0.5] * len(HBB_exon_2), mode='lines', 
+                             line=dict(color='green', width=10), name='HBB exon 2'))
+    fig.add_trace(go.Scatter(x=HBB_exon_3, y=[0.5] * len(HBB_exon_3), mode='lines', 
+                             line=dict(color='orange', width=10), name='HBB exon 3'))
+    fig.add_trace(go.Scatter(x=xrange, y=Fetal_Het_alt, mode='lines', 
+                             line=dict(color='cadetblue', width=4), name='Fetal Het Alt'))
+    fig.add_trace(go.Scatter(x=[5226925], y=Variant_of_interest, mode='markers', 
+                             marker=dict(color='red', size=10), name='Variant of Interest'))
+
+    # Update layout with title and axis labels
+    fig.update_layout(
+        title="Chromosome 11 Plot",
+        xaxis_title="Position",
+        yaxis_title="Fraction",
+        yaxis=dict(range=yrange),
+        legend=dict(title="Legend")
+    )
     return pio.to_html(fig, full_html=False)
 
 def generate_html_content(mean_pat, median_pat, IQR_Pat, mean_Fet, \
@@ -172,7 +205,7 @@ def generate_html_content(mean_pat, median_pat, IQR_Pat, mean_Fet, \
                             report_name, d, g, d_wt, g_wt):
     # Generate the graphs
     sprt_plot_html = generate_sprt_plot(Total_count,Alt_count,d, g, d_wt, g_wt)
-    chr11_plot_html = generate_chr11_plot()
+    chr11_plot_html = generate_chr11_plot(median_pat, Alt_count, Total_count)
 
     # Save FL_SNPs DataFrame as HTML table
     table_html = FL_SNPs.to_html(index=False)
