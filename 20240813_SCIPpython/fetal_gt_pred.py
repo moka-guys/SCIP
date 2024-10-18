@@ -70,8 +70,7 @@ def gt_prediction(fetal_frac,total_count,alt_count):
     else:
         prediction = "Homozygous Wild Type"
 
-    return prediction, mean_pat, median_pat, IQR_Pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs
-
+    return prediction, mean_pat, median_pat, IQR_Pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs, d, g, d_wt, g_wt
 
 
 # # create separate graph functions, save somewhere / pdf report? Ask Karisma re desired output format
@@ -83,23 +82,23 @@ def gt_prediction(fetal_frac,total_count,alt_count):
     #     Lower_limit_graph_rmd = ((np.log(1/8) / x_vals) - np.log(d)) / np.log(g)
     #     Upper_limit_graph_wt = ((np.log(8) / x_vals) - np.log(d_wt)) / np.log(g_wt)
     #     Lower_limit_graph_wt = ((np.log(1/8) / x_vals) - np.log(d_wt)) / np.log(g_wt)
-#     
-#       g_range = (min(Upper_limit_graph_rmd.min(), Lower_limit_graph_rmd.min(), 
-#                 Upper_limit_graph_wt.min(), Lower_limit_graph_wt.min(), alt_count/total_count),
-#             max(Upper_limit_graph_rmd.max(), Lower_limit_graph_rmd.max(), 
-#                 Upper_limit_graph_wt.max(), Lower_limit_graph_wt.max(), alt_count/total_count))
+    
+    #   g_range = (min(Upper_limit_graph_rmd.min(), Lower_limit_graph_rmd.min(), 
+    #             Upper_limit_graph_wt.min(), Lower_limit_graph_wt.min(), alt_count/total_count),
+    #         max(Upper_limit_graph_rmd.max(), Lower_limit_graph_rmd.max(), 
+    #             Upper_limit_graph_wt.max(), Lower_limit_graph_wt.max(), alt_count/total_count))
 
-#     plt.plot(x_vals, Upper_limit_graph_rmd, color='red', label='Upper Limit RMD')
-#     plt.plot(x_vals, Lower_limit_graph_rmd, color='pink', label='Lower Limit RMD')
-#     plt.plot(x_vals, Upper_limit_graph_wt, color='green', label='Upper Limit WT')
-#     plt.plot(x_vals, Lower_limit_graph_wt, color='blue', label='Lower Limit WT')
-#     plt.scatter([total_count], [alt_count / total_count], color='blue', label='Observed')
+    # plt.plot(x_vals, Upper_limit_graph_rmd, color='red', label='Upper Limit RMD')
+    # plt.plot(x_vals, Lower_limit_graph_rmd, color='pink', label='Lower Limit RMD')
+    # plt.plot(x_vals, Upper_limit_graph_wt, color='green', label='Upper Limit WT')
+    # plt.plot(x_vals, Lower_limit_graph_wt, color='blue', label='Lower Limit WT')
+    # plt.scatter([total_count], [alt_count / total_count], color='blue', label='Observed')
 
-#     plt.title("Modified SPRT")
-#     plt.xlabel("Total number of counts")
-#     plt.ylabel("Pr over-represented allele")
-#     plt.legend()
-#     plt.show()
+    # plt.title("Modified SPRT")
+    # plt.xlabel("Total number of counts")
+    # plt.ylabel("Pr over-represented allele")
+    # plt.legend()
+    # plt.show()
 
 #     # Chromosome 11 plot with regions of interest
 #     xrange = np.arange(5225264, 5227272)

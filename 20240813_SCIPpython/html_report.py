@@ -103,19 +103,58 @@ pred_sum_template = """
 """
 
 # Generate Plotly graphs directly as HTML
-def generate_sprt_plot(Total_count, Alt_count):
-    x_vals = list(range(50, 120001)) # TODO softcode these values? how calculated in fetal_get_pred.py?
-    Upper_limit_graph_rmd = ((np.log(8) / x_vals) - np.log(0.5)) / np.log(0.8)
-    Lower_limit_graph_rmd = ((np.log(1/8) / x_vals) - np.log(0.5)) / np.log(0.8)
+def generate_sprt_plot(Total_count, Alt_count, d, g, d_wt, g_wt):
     
+    # Define the x values
+    x_vals = np.arange(50, 120001)
+
+    # Calculate limits
+    Upper_limit_graph_rmd = ((np.log(8) / x_vals) - np.log(d)) / np.log(g)
+    Lower_limit_graph_rmd = ((np.log(1 / 8) / x_vals) - np.log(d)) / np.log(g)
+    Upper_limit_graph_wt = ((np.log(8) / x_vals) - np.log(d_wt)) / np.log(g_wt)
+    Lower_limit_graph_wt = ((np.log(1 / 8) / x_vals) - np.log(d_wt)) / np.log(g_wt)
+
+    # Calculate the y-axis range
+    g_range = (
+        min(Upper_limit_graph_rmd.min(), Lower_limit_graph_rmd.min(),
+            Upper_limit_graph_wt.min(), Lower_limit_graph_wt.min(),
+            Alt_count / Total_count),
+        max(Upper_limit_graph_rmd.max(), Lower_limit_graph_rmd.max(),
+            Upper_limit_graph_wt.max(), Lower_limit_graph_wt.max(),
+            Alt_count / Total_count)
+    )
+
+    # Create a Plotly figure
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=x_vals, y=Upper_limit_graph_rmd, mode='lines', name='Upper Limit RMD', line=dict(color='red')))
-    fig.add_trace(go.Scatter(x=x_vals, y=Lower_limit_graph_rmd, mode='lines', name='Lower Limit RMD', line=dict(color='pink')))
-    fig.add_trace(go.Scatter(x=[Total_count], y=[Alt_count / Total_count], mode='markers', name='Observed', marker=dict(color='blue')))
-    
-    fig.update_layout(title="Modified SPRT", xaxis_title="Total number of counts", yaxis_title="Pr over-represented allele")
-    
+
+    # Add traces for each line
+    fig.add_trace(go.Scatter(x=x_vals, y=Upper_limit_graph_rmd, mode='lines', 
+                             name='Upper Limit RMD', line=dict(color='red')))
+    fig.add_trace(go.Scatter(x=x_vals, y=Lower_limit_graph_rmd, mode='lines', 
+                             name='Lower Limit RMD', line=dict(color='pink')))
+    fig.add_trace(go.Scatter(x=x_vals, y=Upper_limit_graph_wt, mode='lines', 
+                             name='Upper Limit WT', line=dict(color='green')))
+    fig.add_trace(go.Scatter(x=x_vals, y=Lower_limit_graph_wt, mode='lines', 
+                             name='Lower Limit WT', line=dict(color='blue')))
+
+    # Calculate the observed value
+    observed_y = Alt_count / Total_count
+    fig.add_trace(go.Scatter(x=[Total_count], y=[observed_y], mode='markers', 
+                             name='Observed', marker=dict(color='blue', size=10)))
+
+    # Update layout with title, axis labels, and range
+    fig.update_layout(
+        title="Modified SPRT",
+        xaxis_title="Total number of counts",
+        yaxis_title="Pr over-represented allele",
+        xaxis=dict(range=[min(x_vals), max(x_vals)]),
+        yaxis=dict(range=g_range),
+        legend=dict(title="Legend")
+    )
+    # Return the HTML representation of the plot
     return pio.to_html(fig, full_html=False)
+
+
 
 def generate_chr11_plot(): #TODO how is it deciding what allele to show?
     xrange = np.arange(5225264, 5227272)
@@ -130,9 +169,9 @@ def generate_chr11_plot(): #TODO how is it deciding what allele to show?
 
 def generate_html_content(mean_pat, median_pat, IQR_Pat, mean_Fet, \
                           median_Fet, IQR_Fet, Total_count, Alt_count,FL_SNPs, allele,\
-                            report_name):
+                            report_name, d, g, d_wt, g_wt):
     # Generate the graphs
-    sprt_plot_html = generate_sprt_plot(Total_count,Alt_count)
+    sprt_plot_html = generate_sprt_plot(Total_count,Alt_count,d, g, d_wt, g_wt)
     chr11_plot_html = generate_chr11_plot()
 
     # Save FL_SNPs DataFrame as HTML table

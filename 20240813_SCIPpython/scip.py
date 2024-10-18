@@ -74,15 +74,16 @@ class SCIP(object):
                     pred_and_stats = gt_prediction(fetal_frac_output_path,total,alt)
                     
                     prediction, mean_pat, median_pat, \
-                        IQR_pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs = pred_and_stats[0], pred_and_stats[1], \
+                    IQR_pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs, \
+                    d, g, d_wt, g_wt = pred_and_stats[0], pred_and_stats[1], \
                         pred_and_stats[2], pred_and_stats[2], pred_and_stats[4], pred_and_stats[5], pred_and_stats[6], \
-                        pred_and_stats[7]
+                        pred_and_stats[7], pred_and_stats[8], pred_and_stats[9], pred_and_stats[10], pred_and_stats[11]
 
                     print("The predicted fetal genotype for the " + label + " allele is: " + prediction)
                     
                     # generate html content for this allele of interest
                     html_content = html_content + generate_html_content(mean_pat, median_pat, IQR_pat, mean_Fet, \
-                                          median_Fet, IQR_Fet, total, alt, FL_SNPs, label, report_name)
+                                          median_Fet, IQR_Fet, total, alt, FL_SNPs, label, report_name, d, g, d_wt, g_wt)
                     
                     # generate summary html content for this allele of interest
                     html_summary_content = html_summary_content + generate_summary_html_content(report_name,label,prediction)
