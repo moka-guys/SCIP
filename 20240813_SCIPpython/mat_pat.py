@@ -45,7 +45,10 @@ def alleles_of_interest(mat_gt,pat_gt):
 
     parental_alleles = mat_alleles + list(set(pat_alleles) - set(mat_alleles))
 
-    print(parental_alleles)
+    wt_allele = "A"
+
+    if wt_allele in parental_alleles: parental_alleles.remove(wt_allele)
+
 
     # if no alleles / alleles list is empty - error exception here TODO
   

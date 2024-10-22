@@ -16,7 +16,7 @@ def identify_allele(row):
     
 def total_and_alt_counts(SCED_pileup_file,parental_alleles):
     SCED_pileup_file = pd.read_csv(SCED_pileup_file, delimiter="\t", header = None)
-
+    
     # add new column to df which contains allele label
     SCED_pileup_file[6] = SCED_pileup_file.apply(identify_allele, axis = 1)
 

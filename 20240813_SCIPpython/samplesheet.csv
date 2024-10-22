@@ -1,2 +1,4 @@
 Sample,Mat_GT,Pat_GT,HBB_targets,SCED_alleles
 SCIP259,SC,,SCIP259_HBB_targets.mpileup,SCIP259_S_C_E_DPunjab_alleles.mpileup
+SCIP208,AS,,SCIP208/HBB/SCIP060818_01_SCIP208_Nonacus_S1_sorted.mpileup,SCIP208/SCED/SCIP060818_01_SCIP208_Nonacus_S1_sorted.mpileup
+SCIP211,AS,,SCIP211/HBB/SCIP060818_02_SCIP211_Nonacus_S2_sorted.mpileup,SCIP211/SCED/SCIP060818_02_SCIP211_Nonacus_S2_sorted.mpileup

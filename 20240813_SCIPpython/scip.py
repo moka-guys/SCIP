@@ -43,10 +43,13 @@ class SCIP(object):
 
             # assign patient info to variables
             sample,mat_gt,pat_gt,hbb_file,sced_file = row_to_vars(row_index,ss)
-            
+            print("")
+            print("////////// " + sample + " //////////")
+            print("")
+
             # extract parental alleles
             alleles = alleles_of_interest(mat_gt,pat_gt)
-            print(alleles)
+            print("The alleles we should test for are: " + str(alleles))
 
             # extract total and alt counts of parental alleles to variables
             S_total, S_alt, C_total, C_alt, E_total, E_alt, D_total, D_alt = total_and_alt_vars(sced_file, alleles)
@@ -78,7 +81,6 @@ class SCIP(object):
                     d, g, d_wt, g_wt = pred_and_stats[0], pred_and_stats[1], \
                         pred_and_stats[2], pred_and_stats[2], pred_and_stats[4], pred_and_stats[5], pred_and_stats[6], \
                         pred_and_stats[7], pred_and_stats[8], pred_and_stats[9], pred_and_stats[10], pred_and_stats[11]
-
                     print("The predicted fetal genotype for the " + label + " allele is: " + prediction)
                     
                     # generate html content for this allele of interest
