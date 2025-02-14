@@ -103,5 +103,6 @@ def fetal_frac(depth, HBB_mpileup_file, output_file_path):
         fw2.write(f"No. Informative SNPS at Min Read Depth: {informative_snps}\n")
         fw2.write("Informative SNP defined as >2% and <40% Fetal Fraction\n") # this value doesn't take into account whether the SNP reaches the minimum depth.
 
+        return(str(informative_snps))
 ####### test ###########
 #fetal_frac(350,"SCIP259_HBB_targets.mpileup","SCIP259_fetal_frac_output.txt")

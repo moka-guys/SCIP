@@ -73,7 +73,7 @@ class SCIP(object):
         print(fetal_frac_output_path)
         x = 100
         
-        fetal_frac(x,hbb_file,fetal_frac_output_path)
+        informative_snp_count = fetal_frac(x,hbb_file,fetal_frac_output_path)
         print("Analysis done with minimum coverage set to " + str(x))
         
         # try:
@@ -133,7 +133,7 @@ class SCIP(object):
             # generate html header for report
             html_header = generate_html_header(report_name)
 
-            html_table = generate_html_table(report_name,FL_SNPs)
+            html_table = generate_html_table(report_name,FL_SNPs,informative_snp_count)
 
             # combine html contents
             all_html = html_header + html_summary_content + html_table + html_content

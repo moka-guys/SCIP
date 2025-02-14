@@ -91,7 +91,7 @@ inf_snps_template = """
     </style>
 </head>
 <body>
-    <h3>Informative SNPs Table</h3>
+    <h3>Informative SNPs Table: {{informative_snp_count}} informative SNPs detected</h3>
     <div>{{ table_html }}</div>
     </body>
 </html>
@@ -263,11 +263,12 @@ def generate_summary_html_content(report_name,allele, prediction):
 
     return html_summary_content
 
-def generate_html_table(report_name,FL_SNPs):
+def generate_html_table(report_name,FL_SNPs,informative_snp_count):
     table_html = FL_SNPs.to_html(index=False)
     html_table_content = Template(inf_snps_template).render(
         report_name = report_name,
-        table_html = table_html
+        table_html = table_html,
+        informative_snp_count = informative_snp_count
     )
     return html_table_content
 
