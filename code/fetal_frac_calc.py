@@ -14,8 +14,6 @@ def process_row(depth, chr, start, end, num_reads, counts, output_file, fetal_fr
     num_C_Frac = (num_C / num_reads) * 100
     num_T_Frac = (num_T / num_reads) * 100
 
-    #print([num_A,num_G,num_C,num_T])
-    print([num_A_Frac,num_G_Frac,num_C_Frac,num_T_Frac])
 
     # TODO - currently this does not take into account whether the read depth has reached the minimum set, produces a number I think is misleading
     is_informative = False
@@ -48,7 +46,6 @@ def fetal_frac(depth, HBB_mpileup_file, output_file_path):
         fw2.write("chr\tstart\tend\tnum_reads\tA\tA_Frac\tG\tG_Frac\tC\tC_Frac\tT\tT_Frac\n")
 
         for row in r1:
-            print(row)
             columns = row.strip().split("\t")
             chr = columns[0]
             start = int(columns[1])
@@ -61,18 +58,11 @@ def fetal_frac(depth, HBB_mpileup_file, output_file_path):
                 continue
 
             num_reads = int(num_reads)
-            #print(num_reads)
 
             # check whether number of reads meets depth requirement. 
             # If not, move on from row
-            #print(depth)
             if num_reads < depth:
                 continue
-
-            #print(calls)
-
-            #print(columns[2])
-            #print(calls)
 
             # Replace '.' and ',' with corresponding bases
             if columns[2] == 'A':
@@ -83,7 +73,7 @@ def fetal_frac(depth, HBB_mpileup_file, output_file_path):
                 calls = calls.replace('.', 'G').replace(',', 'g')
             elif columns[2] == 'T':
                 calls = calls.replace('.', 'T').replace(',', 't')
-            #print(calls)
+
             # Process the row
             informative_row = process_row(depth, chr, start, end, num_reads, calls, fw2, fetal_fraction_list)
             if informative_row:

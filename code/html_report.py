@@ -279,8 +279,4 @@ def generate_html_header(report_name):
     return html_header
 
 
-# # Write to an HTML file
-# with open('FL_SNPs_report.html', 'w') as f:
-#     f.write(html_content)
 
-# print("Interactive report generated successfully: FL_SNPs_report.html")

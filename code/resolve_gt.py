@@ -40,16 +40,12 @@ def genotype_string_processing(s):
     return s
 
 def resolve_gt(prediction_dictionary):
-
-    print("//////////////////////////////////////")
     result = ""
-    #print(prediction_dictionary)
+
     pred_items = list(prediction_dictionary.items())
-    print(pred_items)
-    #print(pred_items[0]) # (S, heterozygous)
-    #print(pred_items[0][0]) # S
+
     num_of_alleles = len(pred_items)
-    print(num_of_alleles)
+
 
     allele = ""
 
@@ -59,18 +55,18 @@ def resolve_gt(prediction_dictionary):
                         "Homozygous Wild Type":"AA","Inconclusive between Homozygous Mutant and Heterozygous" : f"Inconclusive between {allele + allele} and A{allele}.", \
                         "Inconclusive between Homozygous Wild Type and Heterozygous": f"Inconclusive between A{allele} and AA"}  
         prediction = pred_items[0][1]
-        #print(prediction_to_gt[prediction])
+
         result = prediction_to_gt[prediction]
 
     elif num_of_alleles == 2:
         allele_1 = pred_items[0][0]
-        print(allele_1)
+
         prediction_1 = pred_items[0][1]
-        print(prediction_1)
+
         allele_2 = pred_items[1][0]
-        print(allele_2)
+
         prediction_2 = pred_items[1][1]
-        print(prediction_2)
+
         prediction_to_gt_1 = {"Homozygous Mutant": [allele_1+allele_1], "Heterozygous": ["A" + allele_1], \
                         "Homozygous Wild Type":["AA"],"Inconclusive between Homozygous Mutant and Heterozygous" : [allele_1 + allele_1, "A" + allele_1], \
                         "Inconclusive between Homozygous Wild Type and Heterozygous": ["A" + allele_1, "AA"]}  
@@ -80,31 +76,23 @@ def resolve_gt(prediction_dictionary):
         
         result_1 = prediction_to_gt_1[prediction_1]
         result_2 = prediction_to_gt_2[prediction_2]
-        print(result_1)
-        print(result_2)
+
 
         allele_1_option_count = len(result_1)
         allele_2_option_count = len(result_2)
 
-        print(allele_1_option_count)
-        print(allele_2_option_count)
+
         
         if allele_1_option_count == 1 and allele_2_option_count == 1:
             result = str(result_1[0]) + str(result_2[0])
-            #print(result)
             result = genotype_string_processing(result)
-            #print(result)
             
 
         elif allele_1_option_count == 2 and allele_2_option_count == 1:
             option_1 = result_1[0] + result_2[0]
-            print(option_1)
             option_2 = result_1[1] + result_2[0]
-            print(option_2)
             option_1 = genotype_string_processing(option_1)
             option_2 = genotype_string_processing(option_2)
-            print(option_1)
-            print(option_2)
             result = f"Inconclusive between {option_1} and {option_2}"
 
         elif allele_1_option_count == 1 and allele_2_option_count == 2:
@@ -134,7 +122,6 @@ def resolve_gt(prediction_dictionary):
                     unique_options.append(item)
                     seen.add(item)
 
-            #print(unique_options)
 
             if len(unique_options) == 4:
                 result = f"{unique_options[0]} or {unique_options[1]} or {unique_options[2]} or {unique_options[3]}"
@@ -144,11 +131,9 @@ def resolve_gt(prediction_dictionary):
             elif len(unique_options) == 2:
                 result = f"{unique_options[0]} or {unique_options[1]}"
 
-    print(result)
     return result
 
 
-    #print(pred_items)
         
 
 

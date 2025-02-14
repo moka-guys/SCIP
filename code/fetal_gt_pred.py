@@ -17,7 +17,6 @@ def gt_prediction(fetal_frac,total_count,alt_count):
     FL_SNPs.columns = ["Chromosome", "Start", "End", "Num.reads", "A", "A_fraction", 
                     "G", "G_fraction", "C", "C_fraction", "T", "T_fraction"]
     
-    #print(FL_SNPs)
     # assign number of informative snps to variable
     informative_snps=len(FL_SNPs)
 
@@ -38,13 +37,7 @@ def gt_prediction(fetal_frac,total_count,alt_count):
     # In a real HTML or PDF generation, use pandas to_html() or to_latex()
     #FL_SNPs
 
-    # Print important stats
-    # print(f"Interquartile range of the fetal fraction: {IQR_Fet}")
-    # print(f"Median of the fetal fraction: {median_Fet}")
-    # print(f"Number of SNPs tested: {len(FL_SNPs)}")
-    # print(f"Total count: {total_count}")
-    # print(f"Alternative count: {alt_count}")
-    # print(f"Alternative ratio: {alt_count/total_count}")
+
 
     # SPRT plot setup
     Q0 = 0.5
