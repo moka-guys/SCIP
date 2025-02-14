@@ -125,7 +125,8 @@ class SCIP(object):
             #print(preds)
 
             gt = resolve_gt(preds)
-            #print(gt)
+            print("//////////////////////////")
+            print(gt)
 
             report_name = report_name + ": " + gt
 
