@@ -1,4 +1,5 @@
 import sys 
+import re
 from total_and_alt_count import *
 from fetal_frac_calc import *
 from fetal_gt_pred import *
@@ -44,7 +45,7 @@ class SCIP(object):
 
         alleles = ["S","C","E","D"]
 
-        # extract total and alt counts of parental alleles to variables
+        # extract total and alt counts of SCD alleles to variables
         S_total, S_alt, C_total, C_alt, E_total, E_alt, D_total, D_alt = total_and_alt_vars(sced_file, alleles)
         total_counts = [S_total, C_total, E_total, D_total]
 
@@ -79,23 +80,48 @@ class SCIP(object):
         for total, alt, label in zip(total_counts, alt_counts, allele_labels):
             # selecting only for the relevant alleles according to parental gt
             if total is not None:
-                pred_and_stats = gt_prediction(fetal_frac_output_path,total,alt)
-                    
-                prediction, mean_pat, median_pat, \
-                IQR_pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs, \
-                d, g, d_wt, g_wt = pred_and_stats[0], pred_and_stats[1], \
+                mat_gt_pred = mat_gt_prediction(fetal_frac_output_path,total,alt)
+                print("The observed maternal genotype is: " + mat_gt_pred)
+                
+                if mat_gt_pred == "Heterozygous":
+                    pred_and_stats = mat_het_gt_prediction(fetal_frac_output_path,total,alt)
+                elif mat_gt_pred == "Homozygous mutant":
+                    pred_and_stats = mat_hom_mut_gt_prediction(fetal_frac_output_path,total,alt)
+                elif mat_gt_pred == "Homozygous wildtype":
+                    pred_and_stats = mat_hom_wt_gt_prediction(fetal_frac_output_path,total,alt)
+                else:
+                    print("Strange alt:total ratio: " + str(alt/total))
+
+
+                try:
+                    prediction, mean_pat, median_pat, \
+                    IQR_pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs, \
+                    d, g, d_wt, g_wt = pred_and_stats[0], pred_and_stats[1], \
                     pred_and_stats[2], pred_and_stats[2], pred_and_stats[4], pred_and_stats[5], pred_and_stats[6], \
                     pred_and_stats[7], pred_and_stats[8], pred_and_stats[9], pred_and_stats[10], pred_and_stats[11]
+                except:
+                    prediction, mean_pat, median_pat, \
+                    IQR_pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs, \
+                    d, g = pred_and_stats[0], pred_and_stats[1], \
+                    pred_and_stats[2], pred_and_stats[2], pred_and_stats[4], pred_and_stats[5], pred_and_stats[6], \
+                    pred_and_stats[7], pred_and_stats[8], pred_and_stats[9]
+                
                 if prediction == "Prediction not possible, no informative SNPs found":
                     prediction_possible = False
                 
                 print("The predicted fetal genotype for the " + label + " allele is: " + prediction)
                 label_short = label[0]
                 preds[label_short] = prediction
-                # generate html content for this allele of interest
-                html_content = html_content + generate_html_content(mean_pat, median_pat, IQR_pat, mean_Fet, \
-                                            median_Fet, IQR_Fet, total, alt, FL_SNPs, label, report_name, d, g, d_wt, g_wt)
-                        
+
+                if mat_gt_pred == "Heterozygous":
+                    # generate html content for this allele of interest
+                    html_content = html_content + generate_html_content(mean_pat, median_pat, IQR_pat, mean_Fet, \
+                                                median_Fet, IQR_Fet, total, alt, FL_SNPs, label, report_name, d, g, d_wt, g_wt)
+                else:
+                    html_content= html_content + generate_homozygous_html_content(mean_pat, median_pat, IQR_pat, mean_Fet, \
+                                                median_Fet, IQR_Fet, total, alt, FL_SNPs, label, report_name, d, g)
+
+
                 # generate summary html content for this allele of interest
                 html_summary_content = html_summary_content + generate_summary_html_content(report_name,label,prediction)
 
