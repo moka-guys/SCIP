@@ -1,8 +1,5 @@
 # SCIP
 
-Simple standalone class to calculate FH polygenic risk score accoding to Talmund et al. 2013.
-Code adopted from Bristol and modernised for python3 and pyVCF. Uses build 38 genomic coordinates. 
-
 ## Usage
 `python ./code/scip.py [output html file] [mpileup file path] [sickle cell alleles mpileup file path]`
 
