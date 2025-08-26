@@ -4,6 +4,17 @@ import statistics
 # and total count
 #TODO docstring
 def process_row(depth, chr, start, end, num_reads, counts, output_file, fetal_fraction_list):
+    '''
+    Takes a row of data for a single SNP as input. 
+
+    This function counts the total number of bases, the number of A, T, G and C bases,
+    and calculates the fraction of A, T, G and C bases at the SNP.
+
+    The SNP is classified as informative if the fraction of any base is between 1 and 20%.
+
+    If informative, the row of data is printed and the function sets the variable is_informative to the boolean value of TRUE.
+    
+    '''
     num_A = counts.count('A') + counts.count('a')
     num_G = counts.count('G') + counts.count('g')
     num_C = counts.count('C') + counts.count('c')
@@ -14,8 +25,6 @@ def process_row(depth, chr, start, end, num_reads, counts, output_file, fetal_fr
     num_C_Frac = (num_C / num_reads) * 100
     num_T_Frac = (num_T / num_reads) * 100
 
-
-    # TODO - currently this does not take into account whether the read depth has reached the minimum set, produces a number I think is misleading
     is_informative = False
     if 1 < num_A_Frac < 20:
         fetal_fraction_list.append(num_A_Frac * 2)
