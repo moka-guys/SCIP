@@ -68,6 +68,8 @@ def mat_het_gt_prediction(fetal_frac,total_count,alt_count):
 
     prediction = None
 
+    print(alt_count)
+
     # Classification based on thresholds + whether there are informative snps
     if (informative_snps == 0):
         prediction = "Prediction not possible, no informative SNPs found"

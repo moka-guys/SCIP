@@ -52,7 +52,6 @@ html_template = """
 </head>
 <body>
     <h2>{{ report_section_name }}</h2>
-
     <h3>Summary Statistics</h3>
     <div class="summary">
         <p><strong>Mean Paternal Fraction:</strong> {{ mean_pat }}</p>
@@ -120,6 +119,31 @@ pred_sum_template = """
         <p><strong>Predicted fetal genotype for the {{ allele }}:</strong> {{ prediction }}</p>
     </div>
     </body>
+</html>
+"""
+
+clin_pred_template = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ report_name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { color: #333; }
+        .summary { margin-bottom: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        img { display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <div class="summary">
+        <p><strong>Clinical Prediction:</strong> {{ clin_pred }}</p>
+    </div>
+</body>
 </html>
 """
 
@@ -355,5 +379,11 @@ def generate_html_header(report_name):
     )
     return html_header
 
+def generate_clinical_summary_html(report_name, clin_pred):
+    html = Template(clin_pred_template).render(
+        report_name=report_name,
+        clin_pred=clin_pred
+    )
+    return html
 
 

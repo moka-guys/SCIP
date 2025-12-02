@@ -52,7 +52,7 @@ def resolve_gt(prediction_dictionary):
     if num_of_alleles == 1:
         allele = pred_items[0][0]
         prediction_to_gt = {"Homozygous Mutant": allele+allele, "Heterozygous": "A" + allele, \
-                        "Homozygous Wild Type":"AA","Inconclusive between Homozygous Mutant and Heterozygous" : f"Inconclusive between {allele + allele} and A{allele}.", \
+                        "Homozygous Wild Type":"AA","Inconclusive between Homozygous Mutant and Heterozygous" : f"{allele + allele} / A{allele}.", \
                         "Inconclusive between Homozygous Wild Type and Heterozygous": f"A{allele} / AA"}  
         prediction = pred_items[0][1]
 

@@ -91,3 +91,13 @@ def counts_to_variables(total_alt_count_df):
 def total_and_alt_vars(SCED_pileup_file, parental_alleles):
     df = total_and_alt_counts(SCED_pileup_file, parental_alleles)
     return counts_to_variables(df)
+
+def counts_labels_fetal_frac_path(SCED_pileup_file, parental_alleles,path):
+    S_total, S_alt, C_total, C_alt, E_total, E_alt, D_total, D_alt = total_and_alt_vars(SCED_pileup_file, parental_alleles)
+    print(S_total)
+    total_counts = [S_total, C_total, E_total, D_total]
+    alt_counts = [S_alt, C_alt, E_alt, D_alt]
+    allele_labels = ["S allele", "C allele", "E allele", "D allele"]
+    fetal_frac_output_path = path
+    return total_counts, alt_counts, allele_labels, fetal_frac_output_path
+
