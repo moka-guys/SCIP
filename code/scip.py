@@ -43,24 +43,11 @@ class SCIP(object):
 
         # extract total and alt counts of SCD alleles to variables
         total_counts, alt_counts, allele_labels, fetal_frac_output_path = counts_labels_fetal_frac_path(sced_file, alleles,"fetal_frac_output.txt")
-        # S_total, S_alt, C_total, C_alt, E_total, E_alt, D_total, D_alt = total_and_alt_vars(sced_file, alleles)
-        # total_counts = [S_total, C_total, E_total, D_total]
-
-        # alt_counts = [S_alt, C_alt, E_alt, D_alt]
-
-        # allele_labels = ["S allele", "C allele", "E allele", "D allele"]
-
-        # fetal_frac_output_path = "fetal_frac_output.txt"
 
         x = 100
         
         informative_snp_count = fetal_frac(x,hbb_file,fetal_frac_output_path)
         print("Analysis done with minimum coverage set to " + str(x))
-        
-        # try:
-        #     fetal_frac(500,hbb_file,fetal_frac_output_path)
-        # except:
-        #     fetal_frac(250,hbb_file,fetal_frac_output_path)
 
         # Initialise empty html report content variable
         html_content = ""
