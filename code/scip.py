@@ -27,8 +27,10 @@ class SCIP(object):
         Doc string for function
         """
 
+        os.makedirs(output_dir, exist_ok=True)
+
         # Regular expression to match "SCIP" followed by digits
-        match = re.search(r'(SCIP.*?)(?=\.html)', output_path)
+        match = re.search(r'(SCIP.*?)(?=\.html)', sample_id)
         if match:
             # Extract the matched part
             scip_id = match.group(0)
@@ -37,6 +39,9 @@ class SCIP(object):
             print("No SCIP ID found in the string.")
         
         report_name=scip_id + " Report"
+
+        report_path = os.path.join(output_dir, f"{scip_id}_Report.html")
+        report_path_FE = os.path.join(output_dir, f"{scip_id}_155bp_Report.html")
                
 
         alleles = ["S","C","E","D"]
@@ -54,14 +59,14 @@ class SCIP(object):
         html_summary_content = ""
 
         # generate report title
-        report_path = output_path
+        #report_path = output_path
 
         # initiate prediction dictionary
         preds = {}
         prediction_possible = True
 
         prediction_possible, preds, mat_gt_preds, html_content, html_summary_content, FL_SNPs = scip_pred(report_name,\
-            output_path, fetal_frac_output_path,total_counts,alt_counts,allele_labels)
+            sample_id, fetal_frac_output_path,total_counts,alt_counts,allele_labels)
 
         
         if prediction_possible:
@@ -101,7 +106,7 @@ class SCIP(object):
 
                     # combine html contents
                     all_html_FE = html_header_FE + html_clin_pred_FE + html_summary_content_FE + html_table_FE + html_content_FE
-                    report_path_FE = scip_id + "_155bp_report.html"
+                    #report_path_FE = scip_id + "_155bp_report.html"
                     # output html_content to html report
                     with open (report_path_FE, 'w') as f:
                         f.write(all_html_FE)
@@ -142,9 +147,10 @@ class SCIP(object):
             print("Prediction not possible, no informative SNPs found")            
 
 if __name__ == "__main__":
-    output_path = sys.argv[1]
-    hbb_file = sys.argv[2]
-    sced_file = sys.argv[3]
-    hbb_file_155bp = sys.argv[4]
-    sced_file_155bp= sys.argv[5]
+    output_dir = sys.argv[1]
+    sample_id = sys.argv[2]
+    hbb_file = sys.argv[3]
+    sced_file = sys.argv[4]
+    hbb_file_155bp = sys.argv[5]
+    sced_file_155bp= sys.argv[6]
     SCIP()
