@@ -28,15 +28,6 @@ class SCIP(object):
         """
 
         os.makedirs(output_dir, exist_ok=True)
-
-        # Regular expression to match "SCIP" followed by digits
-        match = re.search(r'(SCIP.*?)(?=\.html)', sample_id)
-        if match:
-            # Extract the matched part
-            scip_id = match.group(0)
-            print("Extracted SCIP ID:", scip_id)
-        else:
-            print("No SCIP ID found in the string.")
         
         report_name=scip_id + " Report"
 
@@ -58,15 +49,12 @@ class SCIP(object):
         html_content = ""
         html_summary_content = ""
 
-        # generate report title
-        #report_path = output_path
-
         # initiate prediction dictionary
         preds = {}
         prediction_possible = True
 
         prediction_possible, preds, mat_gt_preds, html_content, html_summary_content, FL_SNPs = scip_pred(report_name,\
-            sample_id, fetal_frac_output_path,total_counts,alt_counts,allele_labels)
+            scip_id, fetal_frac_output_path,total_counts,alt_counts,allele_labels)
 
         
         if prediction_possible:
@@ -148,7 +136,7 @@ class SCIP(object):
 
 if __name__ == "__main__":
     output_dir = sys.argv[1]
-    sample_id = sys.argv[2]
+    scip_id = sys.argv[2]
     hbb_file = sys.argv[3]
     sced_file = sys.argv[4]
     hbb_file_155bp = sys.argv[5]
