@@ -4,7 +4,7 @@ from total_and_alt_count import *
 from fetal_frac_calc import *
 from fetal_gt_pred import *
 from html_report import *
-from resolve_gt import *
+from resolve_gt_and_clin import *
 from reduce_preds import *
 import pandas as pd
 import math
@@ -25,14 +25,9 @@ class SCIP(object):
         """
         Doc string for function
         """
-        # convert samplesheet csv into dataframe
-        #ss = ss_to_df(self.sample_sheet) # if want to print under if name == main, must be self.ss
-     
-        #ss_len = len(ss)
 
         # Regular expression to match "SCIP" followed by digits
-        match = re.search(r'SCIP\d+', output_path)
-
+        match = re.search(r'(SCIP.*?)(?=\.html)', output_path)
         if match:
             # Extract the matched part
             scip_id = match.group(0)
@@ -129,10 +124,12 @@ class SCIP(object):
         
         if prediction_possible:
             preds = reduce_preds(preds)
-
+            print(preds)
             gt = resolve_gt(preds)
+            print(gt)
+            clin_pred = resolve_clin(gt)
 
-            print("Prediction: " + gt)
+            print(clin_pred)
 
             report_name = report_name + ": " + gt
 
@@ -155,4 +152,6 @@ if __name__ == "__main__":
     output_path = sys.argv[1]
     hbb_file = sys.argv[2]
     sced_file = sys.argv[3]
+    hbb_file_155bp = sys.argv[4]
+    sced_file_155bp= sys.argv[5]
     SCIP()
