@@ -52,7 +52,7 @@ def resolve_gt(prediction_dictionary):
     if num_of_alleles == 1:
         allele = pred_items[0][0]
         prediction_to_gt = {"Homozygous Mutant": allele+allele, "Heterozygous": "A" + allele, \
-                        "Homozygous Wild Type":"AA","Inconclusive between Homozygous Mutant and Heterozygous" : f"{allele + allele} / A{allele}.", \
+                        "Homozygous Wild Type":"AA","Inconclusive between Homozygous Mutant and Heterozygous" : f"{allele + allele} / A{allele}", \
                         "Inconclusive between Homozygous Wild Type and Heterozygous": f"A{allele} / AA"}  
         prediction = pred_items[0][1]
 
@@ -141,9 +141,7 @@ def resolve_clin(gt_pred):
         gt_preds = gt_pred.replace(" ", "").upper()
         # Split composite genotypes like "AS/SS"
         parts = gt_preds.split("/") # produces list of genotypes the prediction is inconclusive between
-        print(parts) 
-        for gt in parts:#
-            print(gt)
+        for gt in parts:
             if not 'A' in gt:
                 return "Inconclusive"
             else:

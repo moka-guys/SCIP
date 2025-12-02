@@ -79,20 +79,16 @@ class SCIP(object):
         
         if prediction_possible:
             preds = reduce_preds(preds)
-            print(preds)
             gt = resolve_gt(preds)
-            print(gt)
             clin_pred = resolve_clin(gt)
-
             
-
-            print("clin pred: " + clin_pred)
+            print("Genotype prediction without foetal enrichment applied: " + gt)
+            print("Clinical prediction without foetal enrichment applied: " + clin_pred)
 
             if clin_pred == "Inconclusive":
                 report_name_FE=scip_id + "_155bp Report"
                 output_path_FE = output_path + "_155bp"
                 total_counts_FE, alt_counts_FE, allele_labels_FE, fetal_frac_output_path_FE = counts_labels_fetal_frac_path(sced_file_155bp, alleles,"fetal_frac_FE.txt")
-                print(total_counts_FE)
                 informative_snp_count_FE = fetal_frac(x,hbb_file_155bp,fetal_frac_output_path_FE)
                 print("FE analysis done with minimum coverage set to " + str(x))
 
@@ -100,14 +96,13 @@ class SCIP(object):
                     output_path_FE, fetal_frac_output_path_FE,total_counts_FE,alt_counts_FE,allele_labels_FE)
 
                 preds_FE = reduce_preds(preds_FE)
-                print(preds_FE)
                 gt_FE = resolve_gt(preds_FE)
-                print(gt_FE)
                 clin_pred_FE = resolve_clin(gt_FE)
-                print(clin_pred_FE)
+                print("Genotype prediction with foetal enrichment applied: " + gt_FE)
+                print("Clinical prediction with foetal enrichment applied: " + clin_pred_FE)
 
 
-                if clin_pred_FE is not "Inconclusive":
+                if clin_pred_FE != "Inconclusive":
                     # update report name to include clin prediction
                     report_name_FE=scip_id + "_155bp Report: " + clin_pred_FE
                     # generate html header for report
@@ -141,7 +136,6 @@ class SCIP(object):
                         f.write(all_html)
 
             else: 
-                print("yay report time")
                 # update report name to include prediction
                 report_name=scip_id + " Report: " + clin_pred
                 # generate html header for report

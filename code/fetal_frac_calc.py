@@ -2,7 +2,6 @@ import statistics
 
 # function that counts each base in row, calcs fraction
 # and total count
-#TODO docstring
 def process_row(depth, chr, start, end, num_reads, counts, output_file, fetal_fraction_list):
     '''
     Takes a row of data for a single SNP as input. 

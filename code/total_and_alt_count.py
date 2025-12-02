@@ -94,7 +94,6 @@ def total_and_alt_vars(SCED_pileup_file, parental_alleles):
 
 def counts_labels_fetal_frac_path(SCED_pileup_file, parental_alleles,path):
     S_total, S_alt, C_total, C_alt, E_total, E_alt, D_total, D_alt = total_and_alt_vars(SCED_pileup_file, parental_alleles)
-    print(S_total)
     total_counts = [S_total, C_total, E_total, D_total]
     alt_counts = [S_alt, C_alt, E_alt, D_alt]
     allele_labels = ["S allele", "C allele", "E allele", "D allele"]
