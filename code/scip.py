@@ -67,13 +67,12 @@ class SCIP(object):
 
             if clin_pred == "Inconclusive":
                 report_name_FE=scip_id + "_155bp Report"
-                output_path_FE = output_path + "_155bp"
                 total_counts_FE, alt_counts_FE, allele_labels_FE, fetal_frac_output_path_FE = counts_labels_fetal_frac_path(sced_file_155bp, alleles,"fetal_frac_FE.txt")
                 informative_snp_count_FE = fetal_frac(x,hbb_file_155bp,fetal_frac_output_path_FE)
                 print("FE analysis done with minimum coverage set to " + str(x))
 
                 prediction_possible_FE, preds_FE, html_content_FE, html_summary_content_FE, FL_SNPs_FE = scip_pred_FE(mat_gt_preds, report_name_FE,\
-                    output_path_FE, fetal_frac_output_path_FE,total_counts_FE,alt_counts_FE,allele_labels_FE)
+                    scip_id, fetal_frac_output_path_FE,total_counts_FE,alt_counts_FE,allele_labels_FE)
 
                 preds_FE = reduce_preds(preds_FE)
                 gt_FE = resolve_gt(preds_FE)
