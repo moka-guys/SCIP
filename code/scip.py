@@ -11,6 +11,7 @@ import pandas as pd
 import math
 import os
 import matplotlib.pyplot as plt
+import statistics
 
 class SCIP(object):
     """
@@ -114,14 +115,14 @@ class SCIP(object):
                         # output html_content to html report
                         with open (report_path, 'w') as f:
                             f.write(all_html)
-                except:
-                    # if its not possible to make a prediction with the 155bp reads, revert to original answer
+                except statistics.StatisticsError:
                     # update report name to include prediction
-                    report_name=scip_id + " Report : " + clin_pred
+                    report_name=scip_id + " Report: " + clin_pred
                     # generate html header for report
                     html_header = generate_html_header(report_name)
-                    html_table = generate_html_table(report_name,FL_SNPs,informative_snp_count)
                     html_clin_pred = generate_clinical_summary_html(report_name, clin_pred)
+
+                    html_table = generate_html_table(report_name,FL_SNPs,informative_snp_count)
 
                     # combine html contents
                     all_html = html_header + html_clin_pred + html_summary_content + html_table + html_content
