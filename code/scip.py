@@ -66,40 +66,56 @@ class SCIP(object):
             print("Clinical prediction without foetal enrichment applied: " + clin_pred)
 
             if clin_pred == "Inconclusive":
-                report_name_FE=scip_id + "_155bp Report"
-                total_counts_FE, alt_counts_FE, allele_labels_FE, fetal_frac_output_path_FE = counts_labels_fetal_frac_path(sced_file_155bp, alleles,"fetal_frac_FE.txt")
-                informative_snp_count_FE = fetal_frac(x,hbb_file_155bp,fetal_frac_output_path_FE)
-                print("FE analysis done with minimum coverage set to " + str(x))
+                try:
+                    report_name_FE=scip_id + "_155bp Report"
+                    total_counts_FE, alt_counts_FE, allele_labels_FE, fetal_frac_output_path_FE = counts_labels_fetal_frac_path(sced_file_155bp, alleles,"fetal_frac_FE.txt")
+                    informative_snp_count_FE = fetal_frac(x,hbb_file_155bp,fetal_frac_output_path_FE)
+                    print("FE analysis done with minimum coverage set to " + str(x))
 
-                prediction_possible_FE, preds_FE, html_content_FE, html_summary_content_FE, FL_SNPs_FE = scip_pred_FE(mat_gt_preds, report_name_FE,\
-                    scip_id, fetal_frac_output_path_FE,total_counts_FE,alt_counts_FE,allele_labels_FE)
+                    prediction_possible_FE, preds_FE, html_content_FE, html_summary_content_FE, FL_SNPs_FE = scip_pred_FE(mat_gt_preds, report_name_FE,\
+                        scip_id, fetal_frac_output_path_FE,total_counts_FE,alt_counts_FE,allele_labels_FE)
 
-                preds_FE = reduce_preds(preds_FE)
-                gt_FE = resolve_gt(preds_FE)
-                clin_pred_FE = resolve_clin(gt_FE)
-                print("Genotype prediction with foetal enrichment applied: " + gt_FE)
-                print("Clinical prediction with foetal enrichment applied: " + clin_pred_FE)
+                    preds_FE = reduce_preds(preds_FE)
+                    gt_FE = resolve_gt(preds_FE)
+                    clin_pred_FE = resolve_clin(gt_FE)
+                    print("Genotype prediction with foetal enrichment applied: " + gt_FE)
+                    print("Clinical prediction with foetal enrichment applied: " + clin_pred_FE)
 
 
-                if clin_pred_FE != "Inconclusive":
-                    # update report name to include clin prediction
-                    report_name_FE=scip_id + "_155bp Report: " + clin_pred_FE
-                    # generate html header for report
-                    html_header_FE = generate_html_header(report_name_FE)
+                    if clin_pred_FE != "Inconclusive":
+                        # update report name to include clin prediction
+                        report_name_FE=scip_id + "_155bp Report: " + clin_pred_FE
+                        # generate html header for report
+                        html_header_FE = generate_html_header(report_name_FE)
 
-                    html_table_FE = generate_html_table(report_name_FE,FL_SNPs_FE,informative_snp_count_FE)
+                        html_table_FE = generate_html_table(report_name_FE,FL_SNPs_FE,informative_snp_count_FE)
 
-                    html_clin_pred_FE = generate_clinical_summary_html(report_name_FE, clin_pred_FE)
+                        html_clin_pred_FE = generate_clinical_summary_html(report_name_FE, clin_pred_FE)
 
-                    # combine html contents
-                    all_html_FE = html_header_FE + html_clin_pred_FE + html_summary_content_FE + html_table_FE + html_content_FE
-                    #report_path_FE = scip_id + "_155bp_report.html"
-                    # output html_content to html report
-                    with open (report_path_FE, 'w') as f:
-                        f.write(all_html_FE)
+                        # combine html contents
+                        all_html_FE = html_header_FE + html_clin_pred_FE + html_summary_content_FE + html_table_FE + html_content_FE
+                        #report_path_FE = scip_id + "_155bp_report.html"
+                        # output html_content to html report
+                        with open (report_path_FE, 'w') as f:
+                            f.write(all_html_FE)
 
-                else:
-                    # if 155bp also makes inconclusive prediction, use the non FE result
+                    else:
+                        # if 155bp also makes inconclusive prediction, use the non FE result
+                        # update report name to include prediction
+                        report_name=scip_id + " Report : " + clin_pred
+                        # generate html header for report
+                        html_header = generate_html_header(report_name)
+                        html_table = generate_html_table(report_name,FL_SNPs,informative_snp_count)
+                        html_clin_pred = generate_clinical_summary_html(report_name, clin_pred)
+
+                        # combine html contents
+                        all_html = html_header + html_clin_pred + html_summary_content + html_table + html_content
+
+                        # output html_content to html report
+                        with open (report_path, 'w') as f:
+                            f.write(all_html)
+                except:
+                    # if its not possible to make a prediction with the 155bp reads, revert to original answer
                     # update report name to include prediction
                     report_name=scip_id + " Report : " + clin_pred
                     # generate html header for report
