@@ -46,7 +46,6 @@ def resolve_gt(prediction_dictionary):
 
     num_of_alleles = len(pred_items)
 
-
     allele = ""
 
     if num_of_alleles == 1:
