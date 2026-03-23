@@ -14,9 +14,16 @@ import matplotlib.pyplot as plt
 import statistics
 
 class SCIP(object):
-    """
-    Description of class.
-    list and description of class attributes. 
+    """ Runs the SCIP (Sickle Cell in Pregnancy) analysis for predicting foetal sickle cell disease status from 
+    allele count data.
+
+    The full workflow includes: extracting allele counts from mpileup files, estimating foetal fraction,
+    generating genotype and clinical predicitons and producing an HTML report. Where initial prediction is
+    inconclusive, analysis with foetal enrichment is attempted. The final HTML report reflects whichever
+    analysis yielded a conclusive clinical prediction.
+
+    Attributes:
+        None (analysis is executed immediately on instantiation via main())
     """
     
     def __init__(self):
