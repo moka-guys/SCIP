@@ -27,29 +27,63 @@ class SCIP(object):
     """
     
     def __init__(self):
-        #self.sample_sheet = sample_sheet
+        """ Initialises the SCIP analysis object and immediately triggers the full analysis workflow.
+
+        No parameters are required at instantiation; all inputs are read from command-line
+        arguments parsed in the `__main__` block.
+        """
+        
         self.main()
 
     def main(self):
         """
-        Doc string for function
-        """
+        Coordinates and executes the full SCIP analysis workflow.
 
+        Steps performed:
+            1. Extracts total and alternate allele counts from mpileup files for SCD-relevant alleles (S, C, E, D).
+            2. Estimates foetal fraction using HBB informative SNPs.
+            3. Generates foetal genotype and clinical predictions.
+            4. If the initial prediction is inconclusive, re-runs analysis using foetal-enriched (155bp) data.
+            5. Writes an HTML report reflecting whichever analysis yielded a conclusive clinical prediction.
+            If both analyses are inconclusive, the non-enriched result is reported.
+
+        Raises:
+            FileNotFoundError: If any of the required input files (mpileup/HBB) are missing.
+            ValueError: If allele count extraction or foetal fraction estimation fails due to malformed input.
+
+        Side effects:
+            - Creates the output directory if it does not already exist.
+            - Writes one or more HTML report files to `output_dir`.
+            - Prints intermediate prediction results and diagnostic messages to stdout.
+
+        Input globals (set from sys.argv in __main__):
+            output_dir (str): Path to the directory where reports will be written.
+            scip_id (str): Sample identifier used in report naming and file paths.
+            hbb_file (str): Path to the HBB mpileup file for foetal fraction estimation.
+            sced_file (str): Path to the SCD allele mpileup file (full-length reads).
+            hbb_file_155bp (str): Path to the HBB mpileup file for foetal-enriched analysis.
+            sced_file_155bp (str): Path to the SCD allele mpileup file (155bp enriched reads).
+        """
+        # make the output directory specified, if it does not already exist
         os.makedirs(output_dir, exist_ok=True)
         
+        # set report name using provided scip id
         report_name=scip_id + " Report"
 
+        # set output report paths for analysis with and without foetal enrichment applied.
         report_path = os.path.join(output_dir, f"{scip_id}_Report.html")
         report_path_FE = os.path.join(output_dir, f"{scip_id}_155bp_Report.html")
                
-
+        # set the names of the SCD alleles being analysed
         alleles = ["S","C","E","D"]
 
         # extract total and alt counts of SCD alleles to variables
         total_counts, alt_counts, allele_labels, fetal_frac_output_path = counts_labels_fetal_frac_path(sced_file, alleles,"fetal_frac_output.txt")
 
+        # set minimum coverage for SNP to be included in foetal fraction calculation
         x = 100
         
+        # determine number of informative snps present in sample
         informative_snp_count = fetal_frac(x,hbb_file,fetal_frac_output_path)
         print("Analysis done with minimum coverage set to " + str(x))
 
@@ -61,18 +95,25 @@ class SCIP(object):
         preds = {}
         prediction_possible = True
 
+        # produce the foetal SCD prediction and report contents for the sample,
+        # without foetal enrichment being applied
         prediction_possible, preds, mat_gt_preds, html_content, html_summary_content, FL_SNPs = scip_pred(report_name,\
             scip_id, fetal_frac_output_path,total_counts,alt_counts,allele_labels)
 
-        
         if prediction_possible:
+            # simplify the predictions 
             preds = reduce_preds(preds)
+            # simplify the predicted genotype to two alleles only
             gt = resolve_gt(preds)
+            # simplify the clinical prediction to an overall clinical prediction, rather than
+            # one per SCD allele
             clin_pred = resolve_clin(gt)
             
             print("Genotype prediction without foetal enrichment applied: " + gt)
             print("Clinical prediction without foetal enrichment applied: " + clin_pred)
 
+            # if the clinical prediction when foetal enrichment is not applied is inconclusive
+            # run the prediciton analysis again with foetal enrichment applied
             if clin_pred == "Inconclusive":
                 report_name_FE=scip_id + "_155bp Report"
                 total_counts_FE, alt_counts_FE, allele_labels_FE, fetal_frac_output_path_FE = counts_labels_fetal_frac_path(sced_file_155bp, alleles,"fetal_frac_FE.txt")
