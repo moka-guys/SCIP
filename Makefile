@@ -1,3 +1,8 @@
+# It is best practice to use make push instead of make build - this both creates the docker image
+# and pushes it to dockerhub
+# Before this, you must ask the dockerhub owners (Phil and Rebecca as of 06/05/2026) to create the
+# docker hub repostory, with name $(APP)
+
 BUILD    := $(shell git describe --tags --always --dirty)
 DIR := $(shell pwd)
 TEST_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))test
