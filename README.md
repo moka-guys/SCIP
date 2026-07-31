@@ -8,7 +8,7 @@ The SCIP python app consists of the main script scip.py which coordinates the en
 With these inputs, the SCIP python app identifies paternal 'informative' alleles, calculates the median foetal fraction, determines the maternal genetic background for each SCD allele and uses these information together to calculate the upper and lower boundaries for the modified sequential probability ratio test analysis, predict the foetal genotype, and output a report containing the sample name, predictions for the HbS, HbC, HbD and HbE alleles, an overall genotype, informative SNP information and interactive graphs (see figure 8). 
 
 ## Usage
-`python ./code/scip.py [output html file] [HBB mpileup file path] [sickle cell alleles mpileup file path] [FE HBB mpileup file path] [FE sickle cell alleles mpileup file path]`
+`python ./code/scip.py [output directory] [scip id] [HBB mpileup file path] [sickle cell alleles mpileup file path] [FE HBB mpileup file path] [FE sickle cell alleles mpileup file path]`
 
 ## Docker image build
 `make build`
