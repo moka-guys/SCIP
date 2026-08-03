@@ -73,7 +73,7 @@ class SCIP(object):
             informative_snp_count_FE = fetal_frac(x,hbb_file_155bp,fetal_frac_output_path_FE)
             print("FE analysis done with minimum coverage set to " + str(x))
 
-            prediction_possible_FE, preds_FE, mat_gt_preds, html_content_FE, html_summary_content_FE, FL_SNPs_FE = scip_pred(report_name_FE,\
+            prediction_possible_FE, preds_FE, mat_gt_preds, html_content_FE, html_summary_content_FE, FL_SNPs_FE, mat_gt_preds = scip_pred(report_name_FE,\
                 scip_id, fetal_frac_output_path_FE,total_counts_FE,alt_counts_FE,allele_labels_FE)
 
             print(f'prediction_possible_FE: {prediction_possible_FE}')
@@ -90,8 +90,11 @@ class SCIP(object):
                 clin_pred_FE = resolve_clin(gt_FE)
                 print("Genotype prediction with foetal enrichment applied: " + gt_FE)
                 print("Clinical prediction with foetal enrichment applied: " + clin_pred_FE)
+
+                mat_gt_preds = reduce_preds(mat_gt_preds)
+                mat_gt = resolve_gt(mat_gt_preds)
             
-                return prediction_possible_FE, clin_pred_FE, preds_FE, FL_SNPs_FE, informative_snp_count_FE, html_content_FE, html_summary_content_FE
+                return prediction_possible_FE, clin_pred_FE, preds_FE, FL_SNPs_FE, informative_snp_count_FE, html_content_FE, html_summary_content_FE, gt, mat_gt
         
         def scip_analysis():
             # extract total and alt counts of SCD alleles to variables
@@ -101,7 +104,7 @@ class SCIP(object):
             informative_snp_count = fetal_frac(x,hbb_file,fetal_frac_output_path)
             print("non-FE analysis done with minimum coverage set to " + str(x))
 
-            prediction_possible, preds, mat_gt_preds, html_content, html_summary_content, FL_SNPs = scip_pred(report_name,\
+            prediction_possible, preds, mat_gt_preds, html_content, html_summary_content, FL_SNPs, mat_gt_preds = scip_pred(report_name,\
                 scip_id, fetal_frac_output_path,total_counts,alt_counts,allele_labels)
 
             print(f'prediction_possible: {prediction_possible}')
@@ -118,8 +121,11 @@ class SCIP(object):
                 clin_pred = resolve_clin(gt)
                 print("Genotype prediction without foetal enrichment applied: " + gt)
                 print("Clinical prediction without foetal enrichment applied: " + clin_pred)
-            
-                return prediction_possible, clin_pred, preds, FL_SNPs, informative_snp_count, html_content, html_summary_content
+
+                mat_gt_preds = reduce_preds(mat_gt_preds)
+                mat_gt = resolve_gt(mat_gt_preds)
+
+                return prediction_possible, clin_pred, preds, FL_SNPs, informative_snp_count, html_content, html_summary_content, gt, mat_gt
 
         def write_fe_report():
             # update report name to include clin prediction
@@ -129,7 +135,7 @@ class SCIP(object):
 
             html_table_FE = generate_html_table(report_name_FE,FL_SNPs_FE,informative_snp_count_FE)
 
-            html_clin_pred_FE = generate_clinical_summary_html(report_name_FE, clin_pred_FE)
+            html_clin_pred_FE = generate_clinical_summary_html(report_name_FE, clin_pred_FE, gt, mat_gt)
 
             # combine html contents
             all_html_FE = html_header_FE + html_clin_pred_FE + html_summary_content_FE + html_table_FE + html_content_FE
@@ -144,7 +150,7 @@ class SCIP(object):
             # generate html header for report
             html_header = generate_html_header(report_name)
             html_table = generate_html_table(report_name,FL_SNPs,informative_snp_count)
-            html_clin_pred = generate_clinical_summary_html(report_name_FE, clin_pred)
+            html_clin_pred = generate_clinical_summary_html(report_name_FE, clin_pred, gt, mat_gt)
             # combine html contents
             all_html = html_header + html_clin_pred + html_summary_content + html_table + html_content
             # output html_content to html report
@@ -157,8 +163,9 @@ class SCIP(object):
         # make the output directory specified, if it does not already exist
         os.makedirs(output_dir, exist_ok=True)
         
-        # Set report name for foetal enrichment analysis
+        # Set report name for foetal enrichment and non foetal enrichment analysis
         report_name_FE=scip_id + "_155bp Report"
+        report_name=scip_id + " Report"
 
         # set output report paths for analysis with and without foetal enrichment applied.
         report_path = os.path.join(output_dir, f"{scip_id}_Report.html")
@@ -171,28 +178,27 @@ class SCIP(object):
         x = 100
         
         # run analysis using foetally enriched data
-        prediction_possible_FE, clin_pred_FE, preds_FE, FL_SNPs_FE, informative_snp_count_FE, html_content_FE, html_summary_content_FE = scip_FE_analysis()
+        try:
+            prediction_possible_FE, clin_pred_FE, preds_FE, FL_SNPs_FE, informative_snp_count_FE, html_content_FE, html_summary_content_FE, gt, mat_gt = scip_FE_analysis()
+            if prediction_possible_FE:            
+                if clin_pred_FE != "Inconclusive":
+                    # write report if foetal enrichment analysis produces conclusive result
+                    write_fe_report()
+                else:         
+                    # non FE analysis performed if FE result is inconclusive
+                    prediction_possible, clin_pred, preds, FL_SNPs, informative_snp_count, html_content, html_summary_content, gt, mat_gt = scip_analysis()
+                    print(f'prediction_possible: {prediction_possible}')
+                    if prediction_possible:
+                        if clin_pred != "Inconclusive":
+                            # if non fe analysis is conclusive, write that report
+                            write_report()
+                        else:
+                            # if non fe analysis is also inconclusive, revert to fe report.
+                            write_fe_report()
        
-        print(f'prediction_possible_FE: {prediction_possible_FE}')
-
-        if prediction_possible_FE:            
-            if clin_pred_FE != "Inconclusive":
-                # write report if foetal enrichment analysis produces conclusive result
-                write_fe_report()
-            else:         
-                # non FE analysis performed if FE result is inconclusive
-                prediction_possible, clin_pred, preds, FL_SNPs, informative_snp_count, html_content, html_summary_content = scip_analysis()
-                print(f'prediction_possible: {prediction_possible}')
-                if prediction_possible:
-                    if clin_pred != "Inconclusive":
-                        # if non fe analysis is conclusive, write that report
-                        write_report()
-                    else:
-                        # if non fe analysis is also inconclusive, revert to fe report.
-                        write_fe_report()
-        else:
-            # if no predictions are creating using foetally enriched data, run the analyis on non-fe and report.
-            prediction_possible, clin_pred, preds, FL_SNPs, informative_snp_count, html_content, html_summary_content = scip_analysis()
+        except:
+            # if no predictions are possible using foetally enriched data, run the analyis on non-fe and report.
+            prediction_possible, clin_pred, preds, FL_SNPs, informative_snp_count, html_content, html_summary_content, gt, mat_gt = scip_analysis()
             print(f'prediction_possible: {prediction_possible}')
             if prediction_possible:
                 write_report()

@@ -142,6 +142,8 @@ clin_pred_template = """
 <body>
     <div class="summary">
         <p><strong>Clinical Prediction:</strong> {{ clin_pred }}</p>
+        <p><strong>Genotype Prediction:</strong> {{ gt_pred }}</p>
+        <p><strong>Maternal genotype detected:</strong> {{ mat_gt }}</p>
     </div>
 </body>
 </html>
@@ -379,10 +381,12 @@ def generate_html_header(report_name):
     )
     return html_header
 
-def generate_clinical_summary_html(report_name, clin_pred):
+def generate_clinical_summary_html(report_name, clin_pred, gt_pred,mat_gt):
     html = Template(clin_pred_template).render(
         report_name=report_name,
-        clin_pred=clin_pred
+        clin_pred=clin_pred,
+        gt_pred=gt_pred,
+        mat_gt=mat_gt
     )
     return html
 

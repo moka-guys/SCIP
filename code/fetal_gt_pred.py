@@ -11,10 +11,10 @@ def mat_gt_prediction(fetal_frac,total_count,alt_count):
     maternal_gt = ""
     if mutant_ratio >= 0.8:
         maternal_gt = "Homozygous mutant"
-    elif 0.3<= mutant_ratio <= 0.7:
-        maternal_gt = "Heterozygous"
     elif mutant_ratio <= 0.2:
-        maternal_gt = "Homozygous wildtype"
+        maternal_gt = "Homozygous Wild Type"
+    else:
+        maternal_gt = "Heterozygous"
 
     return maternal_gt
 

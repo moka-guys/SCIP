@@ -11,6 +11,7 @@ def scip_pred(report_name,output_path, fetal_frac_output_path,total_counts,alt_c
 
     # initiate prediction dictionary
     preds = {}
+    mat_gt_preds_labelled = {}
     prediction_possible = True
     mat_gt_preds = []
 
@@ -25,12 +26,9 @@ def scip_pred(report_name,output_path, fetal_frac_output_path,total_counts,alt_c
                 pred_and_stats = mat_het_gt_prediction(fetal_frac_output_path,total,alt)
             elif mat_gt_pred == "Homozygous mutant":
                 pred_and_stats = mat_hom_mut_gt_prediction(fetal_frac_output_path,total,alt)
-            elif mat_gt_pred == "Homozygous wildtype":
+            elif mat_gt_pred == "Homozygous Wild Type":
                 pred_and_stats = mat_hom_wt_gt_prediction(fetal_frac_output_path,total,alt)
-            else:
-                print("Strange alt:total ratio: " + str(alt/total))
-
-
+ 
             try:
                 prediction, mean_pat, median_pat, \
                 IQR_pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs, \
@@ -43,27 +41,32 @@ def scip_pred(report_name,output_path, fetal_frac_output_path,total_counts,alt_c
                 d, g = pred_and_stats[0], pred_and_stats[1], \
                 pred_and_stats[2], pred_and_stats[2], pred_and_stats[4], pred_and_stats[5], pred_and_stats[6], \
                 pred_and_stats[7], pred_and_stats[8], pred_and_stats[9]
-                
+                    
             if prediction == "Prediction not possible, no informative SNPs found":
                 prediction_possible = False
-                
+                    
             print("The predicted fetal genotype for the " + label + " allele is: " + prediction)
             label_short = label[0]
             preds[label_short] = prediction
+            mat_gt_preds_labelled[label_short] = mat_gt_pred
 
+            print(mat_gt_pred)
             if mat_gt_pred == "Heterozygous":
                 # generate html content for this allele of interest
                 html_content = html_content + generate_html_content(mean_pat, median_pat, IQR_pat, mean_Fet, \
-                                            median_Fet, IQR_Fet, total, alt, FL_SNPs, label, report_name, d, g, d_wt, g_wt)
+                                                median_Fet, IQR_Fet, total, alt, FL_SNPs, label, report_name, d, g, d_wt, g_wt)
+
+                # generate summary html content for this allele of interest
+                html_summary_content = html_summary_content + generate_summary_html_content(report_name,label,prediction)
             else:
                 html_content= html_content + generate_homozygous_html_content(mean_pat, median_pat, IQR_pat, mean_Fet, \
-                                            median_Fet, IQR_Fet, total, alt, FL_SNPs, label, report_name, d, g)
+                                                median_Fet, IQR_Fet, total, alt, FL_SNPs, label, report_name, d, g)
 
 
-            # generate summary html content for this allele of interest
-            html_summary_content = html_summary_content + generate_summary_html_content(report_name,label,prediction)
-
-    return prediction_possible, preds, mat_gt_preds, html_content, html_summary_content, FL_SNPs
+                # generate summary html content for this allele of interest
+                html_summary_content = html_summary_content + generate_summary_html_content(report_name,label,prediction)
+        
+    return prediction_possible, preds, mat_gt_preds, html_content, html_summary_content, FL_SNPs, mat_gt_preds_labelled
 
 
 def scip_pred_FE(mat_gt_preds, report_name,output_path, fetal_frac_output_path,total_counts,alt_counts,allele_labels):
@@ -86,7 +89,7 @@ def scip_pred_FE(mat_gt_preds, report_name,output_path, fetal_frac_output_path,t
                 pred_and_stats = mat_het_gt_prediction(fetal_frac_output_path,total,alt)
             elif mat_pred == "Homozygous mutant":
                 pred_and_stats = mat_hom_mut_gt_prediction(fetal_frac_output_path,total,alt)
-            elif mat_pred == "Homozygous wildtype":
+            elif mat_pred == "Homozygous Wild Type":
                 pred_and_stats = mat_hom_wt_gt_prediction(fetal_frac_output_path,total,alt)
             else:
                 print("Strange alt:total ratio: " + str(alt/total))

@@ -10,4 +10,6 @@ def reduce_preds(preds):
     # Otherwise, remove all Homozygous Wild Type entries
     filtered_preds = {key: value for key, value in preds.items() if value != target_string}
 
+    print(filtered_preds)
+
     return filtered_preds
