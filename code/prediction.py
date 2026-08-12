@@ -24,7 +24,7 @@ def scip_pred(report_name,output_path, fetal_frac_output_path,total_counts,alt_c
                 
             if mat_gt_pred == "Heterozygous":
                 pred_and_stats = mat_het_gt_prediction(fetal_frac_output_path,total,alt)
-            elif mat_gt_pred == "Homozygous mutant":
+            elif mat_gt_pred == "Homozygous Mutant":
                 pred_and_stats = mat_hom_mut_gt_prediction(fetal_frac_output_path,total,alt)
             elif mat_gt_pred == "Homozygous Wild Type":
                 pred_and_stats = mat_hom_wt_gt_prediction(fetal_frac_output_path,total,alt)
@@ -33,13 +33,13 @@ def scip_pred(report_name,output_path, fetal_frac_output_path,total_counts,alt_c
                 prediction, mean_pat, median_pat, \
                 IQR_pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs, \
                 d, g, d_wt, g_wt = pred_and_stats[0], pred_and_stats[1], \
-                pred_and_stats[2], pred_and_stats[2], pred_and_stats[4], pred_and_stats[5], pred_and_stats[6], \
+                pred_and_stats[2], pred_and_stats[3], pred_and_stats[4], pred_and_stats[5], pred_and_stats[6], \
                 pred_and_stats[7], pred_and_stats[8], pred_and_stats[9], pred_and_stats[10], pred_and_stats[11]
             except:
                 prediction, mean_pat, median_pat, \
                 IQR_pat, mean_Fet, median_Fet, IQR_Fet, FL_SNPs, \
                 d, g = pred_and_stats[0], pred_and_stats[1], \
-                pred_and_stats[2], pred_and_stats[2], pred_and_stats[4], pred_and_stats[5], pred_and_stats[6], \
+                pred_and_stats[2], pred_and_stats[3], pred_and_stats[4], pred_and_stats[5], pred_and_stats[6], \
                 pred_and_stats[7], pred_and_stats[8], pred_and_stats[9]
                     
             if prediction == "Prediction not possible, no informative SNPs found":
