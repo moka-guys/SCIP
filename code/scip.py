@@ -94,7 +94,7 @@ class SCIP(object):
                 mat_gt_preds = reduce_preds(mat_gt_preds)
                 mat_gt = resolve_gt(mat_gt_preds)
             
-                return prediction_possible_FE, clin_pred_FE, preds_FE, FL_SNPs_FE, informative_snp_count_FE, html_content_FE, html_summary_content_FE, gt, mat_gt
+                return prediction_possible_FE, clin_pred_FE, preds_FE, FL_SNPs_FE, informative_snp_count_FE, html_content_FE, html_summary_content_FE, gt_FE, mat_gt
         
         def scip_analysis():
             # extract total and alt counts of SCD alleles to variables
@@ -180,23 +180,27 @@ class SCIP(object):
         # run analysis using foetally enriched data
         try:
             prediction_possible_FE, clin_pred_FE, preds_FE, FL_SNPs_FE, informative_snp_count_FE, html_content_FE, html_summary_content_FE, gt, mat_gt = scip_FE_analysis()
-            if prediction_possible_FE:            
-                if clin_pred_FE != "Inconclusive":
-                    # write report if foetal enrichment analysis produces conclusive result
-                    write_fe_report()
-                else:         
-                    # non FE analysis performed if FE result is inconclusive
-                    prediction_possible, clin_pred, preds, FL_SNPs, informative_snp_count, html_content, html_summary_content, gt, mat_gt = scip_analysis()
-                    print(f'prediction_possible: {prediction_possible}')
-                    if prediction_possible:
-                        if clin_pred != "Inconclusive":
+        except Exception as e:
+            print(f"FE analysis failed: {e}")
+            prediction_possible_FE = False
+            
+        if prediction_possible_FE:            
+            if clin_pred_FE != "Inconclusive":
+                # write report if foetal enrichment analysis produces conclusive result
+                write_fe_report()
+            else:         
+                # non FE analysis performed if FE result is inconclusive
+                prediction_possible, clin_pred, preds, FL_SNPs, informative_snp_count, html_content, html_summary_content, gt, mat_gt = scip_analysis()
+                print(f'prediction_possible: {prediction_possible}')
+                if prediction_possible:
+                    if clin_pred != "Inconclusive":
                             # if non fe analysis is conclusive, write that report
                             write_report()
-                        else:
-                            # if non fe analysis is also inconclusive, revert to fe report.
-                            write_fe_report()
+                    else:
+                        # if non fe analysis is also inconclusive, revert to fe report.
+                        write_fe_report()
        
-        except:
+        else:
             # if no predictions are possible using foetally enriched data, run the analyis on non-fe and report.
             prediction_possible, clin_pred, preds, FL_SNPs, informative_snp_count, html_content, html_summary_content, gt, mat_gt = scip_analysis()
             print(f'prediction_possible: {prediction_possible}')
