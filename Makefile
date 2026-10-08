@@ -1,0 +1,34 @@
+# It is best practice to use make push instead of make build - this both creates the docker image
+# and pushes it to dockerhub
+# Before this, you must ask the dockerhub owners (Phil and Rebecca as of 06/05/2026) to create the
+# docker hub repostory, with name $(APP)
+
+BUILD    := $(shell git describe --tags --always --dirty)
+DIR := $(shell pwd)
+TEST_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))test
+
+# define image names
+APP      := scip
+REGISTRY := seglh
+
+# build tags
+IMG           := $(REGISTRY)/$(APP)
+IMG_VERSIONED := $(IMG):$(BUILD)
+IMG_LATEST    := $(IMG):latest
+
+.PHONY: push build tag test version cleanbuild
+
+push: build
+	docker buildx build --platform linux/amd64 -t $(IMG_VERSIONED) . || docker build -t $(IMG_VERSIONED) .
+	docker tag $(IMG_VERSIONED) $(IMG_LATEST)
+	docker save $(IMG_VERSIONED) | gzip > $(DIR)/$(REGISTRY)-$(APP)-$(BUILD).tar.gz
+	docker push $(IMG_VERSIONED)
+	docker push $(IMG_LATEST)
+
+build: version
+	docker buildx build --platform linux/amd64 -t $(IMG_VERSIONED) . || docker build -t $(IMG_VERSIONED) .
+	docker tag $(IMG_VERSIONED) $(IMG_LATEST)
+	docker save $(IMG_VERSIONED) | gzip > $(DIR)/$(REGISTRY)-$(APP)-$(BUILD).tar.gz
+
+cleanbuild:
+	docker buildx build --platform linux/amd64 --no-cache -t $(IMG_VERSIONED) .
